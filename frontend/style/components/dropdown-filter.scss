@@ -1,0 +1,11 @@
+.dropdown-toggle::after {
+  content: none;
+}
+.dropdown-item {
+  &:hover {
+    background: none;
+  }
+}
+.dropdown-text {
+  margin-right: 1em;
+}

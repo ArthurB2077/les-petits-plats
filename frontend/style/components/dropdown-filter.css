@@ -1,0 +1,5 @@
+.dropdown-toggle::after {
+  content: none;
+}
+
+/*# sourceMappingURL=dropdown-filter.css.map */

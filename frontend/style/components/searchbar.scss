@@ -1,0 +1,12 @@
+@import "../utils/variables";
+
+#searchbar {
+  background: $primary-bg-color !important;
+  border-radius: 5px;
+  .searchbar-input {
+    border: none !important;
+    box-shadow: none !important;
+    background: $primary-bg-color !important;
+    padding: 1.2%;
+  }
+}

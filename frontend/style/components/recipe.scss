@@ -1,0 +1,54 @@
+@import "../utils/variables";
+
+#recipes {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-column-gap: 100px;
+  grid-row-gap: 100px;
+  .recipe {
+    display: flex;
+    height: 450px;
+    width: 450px;
+    border-radius: 5px;
+    .recipe-img {
+      background: $secondary-bg-color;
+      height: 50%;
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px;
+    }
+    .recipe-description {
+      background: $primary-bg-color;
+      border-bottom-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+      .recipe-title {
+        .recipe-name {
+          font-size: 18px !important;
+        }
+        .recipe-time {
+          font-size: 18px !important;
+          svg {
+            margin-right: 10px;
+          }
+        }
+      }
+      .recipe-method {
+        max-height: 75%;
+        .recipe-ingredients {
+          ul {
+            list-style: none;
+            li {
+              font-size: 12px !important;
+            }
+          }
+        }
+        .recipe-instructions {
+          font-size: 12px !important;
+          max-height: border-box;
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+}

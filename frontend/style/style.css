@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@500&display=swap");
+@import "components/dropdown-filter.css";
+body {
+  box-sizing: border-box;
+  margin: 3em 6em 3em 6em;
+}
+body header h1 {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  color: #D04F4F;
+}
+
+#searchbar {
+  background: #E7E7E7 !important;
+  border-radius: 5px;
+}
+#searchbar .searchbar-input {
+  border: none !important;
+  box-shadow: none !important;
+  background: #E7E7E7 !important;
+  padding: 1.2%;
+}
+
+#recipes {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-column-gap: 100px;
+  grid-row-gap: 100px;
+}
+#recipes .recipe {
+  display: flex;
+  height: 450px;
+  width: 450px;
+  border-radius: 5px;
+}
+#recipes .recipe .recipe-img {
+  background: #C7BEBE;
+  height: 50%;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+#recipes .recipe .recipe-description {
+  background: #E7E7E7;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+#recipes .recipe .recipe-description .recipe-title .recipe-name {
+  font-size: 18px !important;
+}
+#recipes .recipe .recipe-description .recipe-title .recipe-time {
+  font-size: 18px !important;
+}
+#recipes .recipe .recipe-description .recipe-title .recipe-time svg {
+  margin-right: 10px;
+}
+#recipes .recipe .recipe-description .recipe-method {
+  max-height: 75%;
+}
+#recipes .recipe .recipe-description .recipe-method .recipe-ingredients ul {
+  list-style: none;
+}
+#recipes .recipe .recipe-description .recipe-method .recipe-ingredients ul li {
+  font-size: 12px !important;
+}
+#recipes .recipe .recipe-description .recipe-method .recipe-instructions {
+  font-size: 12px !important;
+  max-height: border-box;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*# sourceMappingURL=style.css.map */

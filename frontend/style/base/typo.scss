@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500&display=swap');
+@import "../utils/variables";
+
+$dms: 'DM Sans', sans-serif;
+
+body {
+  box-sizing: border-box;
+  margin: 3em 6em 3em 6em;
+  header {
+    h1 {
+      font-family: $dms;
+      font-weight: 700;
+      font-style: normal;
+      color: $primary-text-color;
+    }
+  }
+}
