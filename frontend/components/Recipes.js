@@ -3,9 +3,8 @@ import {findInput} from "../scripts/algorithms/functionalAlgoRecursive.js";
 
 const factory = new DOMElementFactory();
 
-class Recipes {
-    constructor(recipe, id, ingredients, description, time, name) {
-        this.recipe = recipe;
+class Recipe {
+    constructor(id, ingredients, description, time, name) {
         this.id = id;
         this.ingredients = ingredients;
         this.description = description;
@@ -22,8 +21,8 @@ class Recipes {
          * List of ingredients and quantity in recipes
          * @type {*}
          */
-        const ingList = factory.createDOMElement('ul', { class: 'ps-0' });
-        this.recipe.ingredients.forEach((ing) => {
+        const ingList = factory.createDOMElement('ul', { class: 'recipe-ingredients-list ps-0' });
+        this.ingredients.forEach((ing) => {
             if (ing.quantity) {
                 const strong = factory.createDOMElement('strong', {}, `${ing.ingredient}`)
                 const span = factory.createDOMElement('span', {}, `: ${ing.quantity}`)
@@ -95,6 +94,46 @@ class Recipes {
             document.getElementById('recipes').appendChild(recipeContainer)
         )
     }
+
+    renderFilteredData(filteredRecipes) {
+        if (filteredRecipes.length !== 0) {
+            const ingredientFilter = document.getElementById('ingredients-list');
+            const deviceFilter = document.getElementById('devices-list');
+            const utensilFilter = document.getElementById('utensils-list');
+
+            Array.from(ingredientFilter.childNodes).forEach(child => {
+                child.remove()
+            });
+            Array.from(deviceFilter.childNodes).forEach(child => {
+                child.remove()
+            });
+            Array.from(utensilFilter.childNodes).forEach(child => {
+                child.remove()
+            });
+
+            const preventDoppelgangerIng = []
+            const preventDoppelgangerUst = []
+            const preventDoppelgangerDev = []
+            filteredRecipes.forEach(recipe => {
+                recipe.ingredients.forEach(ing => {
+                    if (!(preventDoppelgangerIng.includes(ing.ingredient.toLowerCase()))){preventDoppelgangerIng.push(ing.ingredient.toLowerCase());}
+                })
+                if (!preventDoppelgangerDev.includes(recipe.appliance.toLowerCase())){preventDoppelgangerDev.push(recipe.appliance.toLowerCase())}
+                recipe.ustensils.forEach(ust => {
+                    if (!preventDoppelgangerUst.includes(ust.toLowerCase())){preventDoppelgangerUst.push(ust.toLowerCase());}
+                })
+            })
+            preventDoppelgangerIng.forEach((ing, index) => {
+                ingredientFilter.appendChild(factory.createDOMElement('a', { class: 'text-white', href: '#' }, `${ing.replace(ing[0], ing[0].toUpperCase())}`));
+            })
+            preventDoppelgangerDev.forEach(dev => {
+                deviceFilter.appendChild(factory.createDOMElement('a', { class: 'text-white', href: '#' }, `${dev.replace(dev[0], dev[0].toUpperCase())}`));
+            })
+            preventDoppelgangerUst.forEach(ust => {
+                utensilFilter.appendChild(factory.createDOMElement('a', { class: 'text-white', href: '#' }, `${ust.replace(ust[0], ust[0].toUpperCase())}`));
+            })
+        }
+    }
 }
 const recipesSection = factory.createDOMElement('section', { id: 'recipes', 'aria-label': 'Section recettes' });
 document.getElementById('root').appendChild(recipesSection);
@@ -105,21 +144,22 @@ fetch('./../../api/data/recipe.json')
     })
     .then(recipes => {
         recipes.forEach(recipe => {
-            const recipeToRender = new Recipes(recipe, recipe.id, recipe.ingredients, recipe.description, recipe.time, recipe.name);
+            const recipeToRender = new Recipe(recipe.id, recipe.ingredients, recipe.description, recipe.time, recipe.name);
             recipeToRender.oneRecipe();
-        })
 
-        document.getElementById('searchbar-input').addEventListener('input', (event) => {
-            if (event.target.value.length > 3) {
-                Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none')
-                findInput(`${event.target.value}`, recipes).forEach(recipe => {
-                    document.getElementById(`${recipe.id}`).style.display = 'flex';
-                })
-            } else {
-                Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'flex')
-            }
+            document.getElementById('searchbar-input').addEventListener('input', (event) => {
+                if (event.target.value.length > 2) {
+                    Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none')
+                    findInput(`${event.target.value}`, recipes).forEach(recipe => {
+                        document.getElementById(`${recipe.id}`).style.display = 'flex';
+                    })
+                    recipeToRender.renderFilteredData(findInput(`${event.target.value}`, recipes));
+                } else {
+                    Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'flex')
+                    recipeToRender.renderFilteredData(findInput(`${event.target.value}`, []));
+                }
+            })
         })
-
     })
 
-export default Recipes;
+export default Recipe;

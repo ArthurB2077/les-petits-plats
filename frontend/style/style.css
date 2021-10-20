@@ -33,6 +33,7 @@ body header h1 {
   height: 450px;
   width: 450px;
   border-radius: 5px;
+  z-index: 0;
 }
 #recipes .recipe .recipe-img {
   background: #C7BEBE;
