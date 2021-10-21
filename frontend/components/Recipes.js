@@ -1,5 +1,6 @@
 import DOMElementFactory from "../scripts/factory/domElementFactory.js";
 import {findInput} from "../scripts/algorithms/functionalAlgoRecursive.js";
+import {filters} from "./FilterByTags.js";
 
 const factory = new DOMElementFactory();
 
@@ -124,7 +125,7 @@ class Recipe {
                 })
             })
             preventDoppelgangerIng.forEach((ing) => {
-                ingredientFilter.appendChild(factory.createDOMElement('a', { class: 'text-white', href: '#' }, `${ing.replace(ing[0], ing[0].toUpperCase())}`));
+                ingredientFilter.appendChild(factory.createDOMElement('a', { class: 'dropdown-filter-item text-white', href: '#' }, `${ing.replace(ing[0], ing[0].toUpperCase())}`));
             })
             preventDoppelgangerDev.forEach(dev => {
                 deviceFilter.appendChild(factory.createDOMElement('a', { class: 'text-white', href: '#' }, `${dev.replace(dev[0], dev[0].toUpperCase())}`));
@@ -149,11 +150,14 @@ fetch('./../../api/data/recipe.json')
 
             document.getElementById('searchbar-input').addEventListener('input', (event) => {
                 if (event.target.value.length > 2) {
+
                     const filteredRecipes = findInput(`${event.target.value}`, recipes);
+
                     Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none')
                     filteredRecipes.forEach(recipe => {
                         document.getElementById(`${recipe.id}`).style.display = 'flex';
                     })
+
                     recipeToRender.renderFilteredData(filteredRecipes);
 
 
@@ -168,6 +172,56 @@ fetch('./../../api/data/recipe.json')
                             elementsToFilter.forEach(el => {
                                 if (!(el.textContent.toLowerCase().includes(event.target.value.toLowerCase()))) {el.style.display = 'none'}
                             })
+                        })
+                    })
+
+                    Array.from(document.getElementsByClassName('dropdown-filter-item')).forEach(item => {
+                        item.addEventListener('click', (event) => {
+                            filters.tagsBuilder(event.target.textContent);
+                            event.target.style.display = 'none';
+                            const selectedTagsArray = []
+                            Array.from(document.getElementById('tags').children).forEach(item => {
+                                selectedTagsArray.push(item.textContent)
+                            });
+
+                            filteredRecipes.forEach(recipe => {
+                                const ingredients = []
+                                recipe.ingredients.forEach(ing => {
+                                    ingredients.push(ing.ingredient)
+                                })
+                                console.log(ingredients.sort().join())
+                                console.log(selectedTagsArray.sort().join())
+                                if(ingredients.sort().join().includes(selectedTagsArray.sort().join())) {
+                                    document.getElementById(`${recipe.id}`).style.display = 'flex';
+                                } else {
+                                    document.getElementById(`${recipe.id}`).style.display = 'none';
+                                }
+                            })
+
+                            // A revoir par rapport à la nouvelle manière de filtrer par tag
+                            Array.from(document.getElementsByClassName('close-tag')).forEach(close => {
+                                close.addEventListener('click', () => {
+                                    event.target.style.display = 'flex';
+                                    if (close.parentElement.id) {
+                                        document.getElementById(close.parentElement.id).remove()
+                                        const selectedTagsArray = Array.from(document.getElementById('tags').children);
+                                        if (selectedTagsArray.length !== 0) {
+                                            Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none');
+                                            selectedTagsArray.forEach(tag => {
+                                                const filteredRecipesByTags = findInput(`${tag.firstElementChild.textContent}`, filteredRecipes);
+                                                filteredRecipesByTags.forEach(recipe => {
+                                                    document.getElementById(`${recipe.id}`).style.display = 'flex';
+                                                })
+                                            });
+                                        } else {
+                                            Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none')
+                                            filteredRecipes.forEach(recipe => {
+                                                document.getElementById(`${recipe.id}`).style.display = 'flex';
+                                            })
+                                        }
+                                    }
+                                })
+                            });
                         })
                     })
 
