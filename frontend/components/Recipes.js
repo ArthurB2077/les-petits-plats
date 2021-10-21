@@ -155,15 +155,19 @@ fetch('./../../api/data/recipe.json')
                         document.getElementById(`${recipe.id}`).style.display = 'flex';
                     })
                     recipeToRender.renderFilteredData(filteredRecipes);
-                    document.getElementById('dropdown-search').addEventListener('input', (event) => {
-                        const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
-                        const elementsToFilter = Array.from(parentElement.children);
 
-                        elementsToFilter.forEach(el => {
-                            el.style.display = 'flex';
-                        })
-                        elementsToFilter.forEach(el => {
-                            if (!(el.textContent.toLowerCase().includes(event.target.value.toLowerCase()))) {el.style.display = 'none'}
+
+                    Array.from(document.getElementsByClassName('dropdown-button__input')).forEach(filter => {
+                        filter.addEventListener('input', (event) => {
+                            const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
+                            const elementsToFilter = Array.from(parentElement.children);
+
+                            elementsToFilter.forEach(el => {
+                                el.style.display = 'flex';
+                            })
+                            elementsToFilter.forEach(el => {
+                                if (!(el.textContent.toLowerCase().includes(event.target.value.toLowerCase()))) {el.style.display = 'none'}
+                            })
                         })
                     })
 
