@@ -123,7 +123,7 @@ class Recipe {
                     if (!preventDoppelgangerUst.includes(ust.toLowerCase())){preventDoppelgangerUst.push(ust.toLowerCase());}
                 })
             })
-            preventDoppelgangerIng.forEach((ing, index) => {
+            preventDoppelgangerIng.forEach((ing) => {
                 ingredientFilter.appendChild(factory.createDOMElement('a', { class: 'text-white', href: '#' }, `${ing.replace(ing[0], ing[0].toUpperCase())}`));
             })
             preventDoppelgangerDev.forEach(dev => {
@@ -149,16 +149,30 @@ fetch('./../../api/data/recipe.json')
 
             document.getElementById('searchbar-input').addEventListener('input', (event) => {
                 if (event.target.value.length > 2) {
+                    const filteredRecipes = findInput(`${event.target.value}`, recipes);
                     Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none')
-                    findInput(`${event.target.value}`, recipes).forEach(recipe => {
+                    filteredRecipes.forEach(recipe => {
                         document.getElementById(`${recipe.id}`).style.display = 'flex';
                     })
-                    recipeToRender.renderFilteredData(findInput(`${event.target.value}`, recipes));
+                    recipeToRender.renderFilteredData(filteredRecipes);
+                    document.getElementById('dropdown-search').addEventListener('input', (event) => {
+                        const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
+                        const elementsToFilter = Array.from(parentElement.children);
+
+                        elementsToFilter.forEach(el => {
+                            el.style.display = 'flex';
+                        })
+                        elementsToFilter.forEach(el => {
+                            if (!(el.textContent.toLowerCase().includes(event.target.value.toLowerCase()))) {el.style.display = 'none'}
+                        })
+                    })
+
                 } else {
                     Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'flex')
                     recipeToRender.renderFilteredData(findInput(`${event.target.value}`, []));
                 }
             })
+
         })
     })
 
