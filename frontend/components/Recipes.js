@@ -202,14 +202,16 @@ fetch('./../../api/data/recipe.json')
                         el.style.display = 'flex';
                     });
                 }
-
+            })
+            filter.addEventListener('change', (event) => {
                 const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
                     item.getAttribute('style') === 'display: flex;'
                 )
-                console.log("Array of tags items displayed: ", tagItemsDisplayed)
                 tagItemsDisplayed.forEach(tagItem => {
                     tagItem.addEventListener('click', (event) => {
-                        console.log("On tag item click event: ", event);
+                        filters.tagsBuilder(event.target.textContent);
+                        event.target.style.display = 'none';
+                        document.getElementById('ingredients-list-input').value = '';
                     })
                 })
             })
@@ -217,15 +219,6 @@ fetch('./../../api/data/recipe.json')
                 if (document.getElementById('searchbar-input').value.length < 3) {
                     renderRecipesTags(recipes);
                 }
-                const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
-                const elementsToFilter = Array.from(parentElement.children);
-
-                elementsToFilter.forEach(el => {
-                    el.style.display = 'flex';
-                });
-            })
-            filter.addEventListener('blur', (event) => {
-                event.target.value = '';
                 const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
                 const elementsToFilter = Array.from(parentElement.children);
 
