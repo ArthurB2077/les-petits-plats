@@ -111,6 +111,7 @@ fetch('./../../api/data/recipe.json')
         });
 
         let recipeDisplayed = recipes;
+        const selectedTagsArray = [];
 
         const renderDisplayedRecipes = (recipesToDisplay) => {
             Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none');
@@ -218,8 +219,23 @@ fetch('./../../api/data/recipe.json')
                 tagItemsDisplayed.forEach(tagItem => {
                     tagItem.addEventListener('click', (event) => {
                         filters.tagsBuilder(event.target.textContent);
+                        selectedTagsArray.push(event.target.textContent);
                         event.target.style.display = 'none';
                         document.getElementById('ingredients-list-input').value = '';
+
+                        recipeDisplayed.forEach(recipe => {
+                            const ingredients = []
+                            recipe.ingredients.forEach(ing => {
+                                ingredients.push(ing.ingredient)
+                            })
+                            console.log("Recipes ingredients", ingredients.sort().join())
+                            console.log("Tags ingredients", selectedTagsArray.sort().join())
+                            if(ingredients.sort().join().includes(selectedTagsArray.sort().join())) {
+                                document.getElementById(`${recipe.id}`).style.display = 'flex';
+                            } else {
+                                document.getElementById(`${recipe.id}`).style.display = 'none';
+                            }
+                        })
                     })
                 })
             })
