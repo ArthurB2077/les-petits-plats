@@ -194,29 +194,29 @@ fetch('./../../api/data/recipe.json')
             filter.addEventListener('input', (event) => {
                 const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
                 const elementsToFilter = Array.from(parentElement.children);
+                const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
+                const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
 
                 if(event.target.value.length > 2) {
-                    elementsToFilter.forEach(el => {
+                    elementsFiltered.forEach(el => {
                         el.style.display = 'flex';
                     });
-                    elementsToFilter.forEach(el => {
+                    elementsFiltered.forEach(el => {
                         if (!(el.textContent.toLowerCase().includes(event.target.value.toLowerCase()))) {el.style.display = 'none';}
                     });
                 } else {
-                    elementsToFilter.forEach(el => {
+                    elementsFiltered.forEach(el => {
                         el.style.display = 'flex';
                     });
                 }
             })
-            filter.addEventListener('change', (event) => {
-                // Tag builder method
+            filter.addEventListener('change', () => {
                 const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
                     item.getAttribute('style') === 'display: flex;'
                 )
 
                 tagItemsDisplayed.forEach(tagItem => {
                     tagItem.addEventListener('click', (event) => {
-                        console.log("Tag added")
                         filters.tagsBuilder(event.target.textContent);
                         event.target.style.display = 'none';
                         document.getElementById('ingredients-list-input').value = '';
@@ -225,16 +225,17 @@ fetch('./../../api/data/recipe.json')
             })
             filter.addEventListener('focus', (event) => {
                 if (document.getElementById('searchbar-input').value.length < 3) {
-                    renderRecipesTags(recipes);
+                    renderRecipesTags(recipeDisplayed);
                 }
                 const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
                 const elementsToFilter = Array.from(parentElement.children);
+                const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
+                const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
 
-                elementsToFilter.forEach(el => {
+                elementsFiltered.forEach(el => {
                     el.style.display = 'flex';
                 });
 
-                // Tag builder method
                 const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
                     item.getAttribute('style') === 'display: flex;'
                 )
