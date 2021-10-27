@@ -122,6 +122,9 @@ fetch('./../../api/data/recipe.json')
             const ingredientFilter = document.getElementById('ingredients-list');
             const deviceFilter = document.getElementById('devices-list');
             const utensilFilter = document.getElementById('utensils-list');
+            const tags = Array.from(document.getElementById('tags').children).map(item =>
+                item.querySelector('span').textContent
+            )
             const preventDoppelgangerIng = [];
             const preventDoppelgangerUst = [];
             const preventDoppelgangerDev = [];
@@ -146,7 +149,9 @@ fetch('./../../api/data/recipe.json')
                     })
                 });
                 preventDoppelgangerIng.forEach((ing) => {
-                    ingredientFilter.appendChild(factory.createDOMElement('a', { class: 'dropdown-filter-item text-white', href: '#' }, `${ing.replace(ing[0], ing[0].toUpperCase())}`));
+                    if (!(tags.includes(ing.replace(ing[0], ing[0].toUpperCase())))) {
+                        ingredientFilter.appendChild(factory.createDOMElement('a', { class: 'dropdown-filter-item text-white', href: '#' }, `${ing.replace(ing[0], ing[0].toUpperCase())}`));
+                    }
                 });
                 preventDoppelgangerDev.forEach(dev => {
                     deviceFilter.appendChild(factory.createDOMElement('a', { class: 'text-white', href: '#' }, `${dev.replace(dev[0], dev[0].toUpperCase())}`));
@@ -204,11 +209,14 @@ fetch('./../../api/data/recipe.json')
                 }
             })
             filter.addEventListener('change', (event) => {
+                // Tag builder method
                 const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
                     item.getAttribute('style') === 'display: flex;'
                 )
+
                 tagItemsDisplayed.forEach(tagItem => {
                     tagItem.addEventListener('click', (event) => {
+                        console.log("Tag added")
                         filters.tagsBuilder(event.target.textContent);
                         event.target.style.display = 'none';
                         document.getElementById('ingredients-list-input').value = '';
@@ -225,6 +233,18 @@ fetch('./../../api/data/recipe.json')
                 elementsToFilter.forEach(el => {
                     el.style.display = 'flex';
                 });
+
+                // Tag builder method
+                const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
+                    item.getAttribute('style') === 'display: flex;'
+                )
+                tagItemsDisplayed.forEach(tagItem => {
+                    tagItem.addEventListener('click', (event) => {
+                        filters.tagsBuilder(event.target.textContent);
+                        event.target.style.display = 'none';
+                        document.getElementById('ingredients-list-input').value = '';
+                    })
+                })
             })
         })
     })
