@@ -26,7 +26,7 @@
 .btn-group-container .dropdown-btn-group .dropdown-button .dropdown-button__input:focus {
   outline: none;
 }
-.btn-group-container .dropdown-btn-group .dropdown-button svg path {
+.btn-group-container .dropdown-btn-group .dropdown-button .dropdown-spinner path {
   pointer-events: none;
 }
 .btn-group-container .dropdown-btn-group .dropdown-button__unroll {
@@ -49,6 +49,9 @@
 }
 .btn-group-container .dropdown-btn-group .dropdown-button__unroll .dropdown-button__input:focus {
   outline: none;
+}
+.btn-group-container .dropdown-btn-group .dropdown-button__unroll .dropdown-spinner path {
+  pointer-events: none;
 }
 .btn-group-container .dropdown-btn-group .dropdown-list-container {
   display: none;

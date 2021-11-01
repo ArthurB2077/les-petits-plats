@@ -23,7 +23,7 @@
           outline: none;
         }
       }
-      svg {
+      .dropdown-spinner {
         path {
           pointer-events: none;
         }
@@ -47,6 +47,11 @@
         }
         &:focus {
           outline: none;
+        }
+      }
+      .dropdown-spinner {
+        path {
+          pointer-events: none;
         }
       }
     }

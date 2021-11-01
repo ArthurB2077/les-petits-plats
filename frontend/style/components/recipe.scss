@@ -3,19 +3,39 @@
 #recipes {
   display: grid;
   grid-template-columns: auto auto auto;
-  grid-column-gap: 100px;
-  grid-row-gap: 100px;
+  grid-column-gap: 5%;
+  grid-row-gap: 1%;
+  @media all and (min-width: 1030px) and (max-width: 1690px) {
+    grid-template-columns: auto auto;
+    grid-column-gap: 8%;
+  }
+  @media all and (min-width: 260px) and (max-width: 1480px) {
+    grid-column-gap: 10%;
+  }
+  @media all and (min-width: 260px) and (max-width: 1029px) {
+    grid-template-columns: auto;
+    grid-row-gap: 100px;
+    padding: 50px;
+  }
+  @media all and (min-width: 260px) and (max-width: 679px) {
+    padding: 0;
+  }
   .recipe {
     display: flex;
     height: 450px;
-    width: 450px;
     border-radius: 5px;
     z-index: 0;
+    @media all and (min-width: 260px) and (max-width: 550px) {
+      height: 320px;
+    }
     .recipe-img {
       background: $secondary-bg-color;
       height: 50%;
       border-top-right-radius: 5px;
       border-top-left-radius: 5px;
+      @media all and (min-width: 260px) and (max-width: 550px) {
+        height: 30% !important;
+      }
     }
     .recipe-description {
       background: $primary-bg-color;

@@ -50,7 +50,7 @@ class FilterByTags {
             dropdownListContainer.appendChild(dropdownList)
 
             const buttonTitle = factory.createDOMElement('input', { id: `${filter.id}-input`, class: 'dropdown-button__input', placeholder: `${filter.title}`, disabled: '' });
-            const buttonSpinner = factory.createDOMElement('svg', { id: `${filter.toggle}`, class: 'dropdown-spinner', 'data-toggle': 'rolled', width:'16', height: '11', viewBox: '0 0 16 11', fill: 'none', xmlns: 'http://www.w3.org/2000/svg' }, factory.createDOMElement('path', { d: 'M14.12 0.453369L8 6.56004L1.88 0.453369L0 2.33337L8 10.3334L16 2.33337L14.12 0.453369Z', fill: 'white' }));
+            const buttonSpinner = factory.createDOMElement('svg', { id: `${filter.toggle}`, class: 'dropdown-spinner', 'data-toggle': 'rolled', width:'20px', height: '20px', padding: '10px', viewBox: '0 0 16 11', fill: 'none', xmlns: 'http://www.w3.org/2000/svg' }, factory.createDOMElement('path', { d: 'M14.12 0.453369L8 6.56004L1.88 0.453369L0 2.33337L8 10.3334L16 2.33337L14.12 0.453369Z', fill: 'white' }));
             const dropdownButton = factory.createDOMElement('button', { type: 'button', class: `dropdown-button btn ${filter['btn-color']} btn-lg pt-3 pb-3`, 'aria-expanded': 'false' }, buttonTitle, buttonSpinner);
             dropDownButtonContainer.appendChild(factory.createDOMElement('div', { id: `${filter.title.toLowerCase()}-group`, class: 'dropdown-btn-group me-3' }, dropdownButton, dropdownListContainer));
         })
@@ -68,16 +68,19 @@ class FilterByTags {
                 const dropdownContainer = parentGroup.childNodes[1];
                 const dropdownButton = parentGroup.childNodes[0];
                 const dropdownInput = dropdownButton.childNodes[0];
+                const dropdownIcon = document.getElementById(filter.toggle);
 
                 if (event.target.getAttribute('data-toggle') === 'rolled') {
                     dropdownContainer.classList.replace('dropdown-list-container', 'dropdown-list-container__unroll');
                     dropdownButton.classList.replace('dropdown-button', 'dropdown-button__unroll');
+                    dropdownIcon.style.transform = 'rotate(180deg)';
                     dropdownInput.setAttribute('placeholder', `Rechercher un ${filter.title.toLowerCase()}`);
                     dropdownInput.removeAttribute('disabled');
                     event.target.setAttribute('data-toggle', 'unrolled')
                 } else if (event.target.getAttribute('data-toggle') === 'unrolled') {
                     dropdownContainer.classList.replace('dropdown-list-container__unroll', 'dropdown-list-container');
                     dropdownButton.classList.replace('dropdown-button__unroll', 'dropdown-button');
+                    dropdownIcon.style.transform = 'rotate(0deg)';
                     dropdownInput.setAttribute('placeholder', `${filter.title}s`);
                     dropdownInput.setAttribute('disabled', '');
                     event.target.setAttribute('data-toggle', 'rolled')
