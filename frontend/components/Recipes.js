@@ -176,9 +176,7 @@ fetch('./../../api/data/recipe.json')
             return arrayIncludes.every(item => arrayIncluding.includes(item))
         };
         const filterRecipesByTags = () => {
-            const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
-                item.getAttribute('style') === 'display: flex;'
-            )
+            const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item => item.getAttribute('style') === 'display: flex;');
 
             tagItemsDisplayed.forEach(tagItem => {
                 tagItem.addEventListener('click', (event) => {
@@ -261,6 +259,43 @@ fetch('./../../api/data/recipe.json')
             })
         })
 
+        document.getElementById('tags').addEventListener('mouseover', () => {
+            const tagsCloseButtons = Array.from(document.getElementsByClassName('close-tag'));
+            tagsCloseButtons.forEach(closeTag => {
+                closeTag.addEventListener('click', (event) => {
+                    const tagToClose = event.target.parentElement;
+                    const tagItemsNotDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item => item.getAttribute('style') === 'display: none;');
+
+                    tagToClose.remove()
+                    selectedTagsArray.forEach((tag, index) => {
+                        if (tag === event.target.parentElement.firstElementChild.textContent) {
+                            selectedTagsArray.splice(index, 1);
+                            tagItemsNotDisplayed.forEach(tagItem => {
+                                if (tagItem.textContent === tag) {
+                                    tagItem.style.display = 'flex';
+                                }
+                            })
+                        }
+                    })
+                    if (selectedTagsArray.length === 0) {
+                        renderDisplayedRecipes(recipeDisplayed);
+                    } else {
+                        recipeDisplayed.forEach(recipe => {
+                            const ingredients = []
+                            recipe.ingredients.forEach(ing => {
+                                ingredients.push(ing.ingredient)
+                            })
+
+                            if(isArrayIncludes(selectedTagsArray, ingredients)) {
+                                document.getElementById(`${recipe.id}`).style.display = 'flex';
+                            } else {
+                                document.getElementById(`${recipe.id}`).style.display = 'none';
+                            }
+                        })
+                    }
+                })
+            })
+        })
 
     })
 
