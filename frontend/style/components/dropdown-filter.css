@@ -1,16 +1,14 @@
 .btn-group-container {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: auto auto auto;
 }
 .btn-group-container .dropdown-btn-group {
   display: flex;
   flex-direction: column;
-  width: 30%;
-  height: 70px !important;
+  width: fit-content;
 }
 .btn-group-container .dropdown-btn-group .dropdown-button {
   height: 70px !important;
-  width: 200px;
   border-radius: 5px;
 }
 .btn-group-container .dropdown-btn-group .dropdown-button .dropdown-button__input {
@@ -18,6 +16,8 @@
   border: none;
   width: 130px;
   margin-right: 10px;
+  float: left;
+  color: white;
 }
 .btn-group-container .dropdown-btn-group .dropdown-button .dropdown-button__input::placeholder {
   color: white;
@@ -30,7 +30,7 @@
   pointer-events: none;
 }
 .btn-group-container .dropdown-btn-group .dropdown-button__unroll {
-  width: 500px;
+  width: auto;
   border-top-right-radius: 5px !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
@@ -40,6 +40,8 @@
   border: none;
   width: 90%;
   margin-right: 10px;
+  float: left;
+  color: white;
 }
 .btn-group-container .dropdown-btn-group .dropdown-button__unroll .dropdown-button__input::placeholder {
   color: white;
@@ -53,18 +55,18 @@
 }
 .btn-group-container .dropdown-btn-group .dropdown-list-container__unroll {
   display: flex;
-  width: 500px;
+  width: 100%;
   position: relative;
   z-index: 1;
 }
 .btn-group-container .dropdown-btn-group .dropdown-list-container__unroll .dropdown-list {
+  width: 100%;
   display: grid;
   grid-template-columns: auto auto auto;
-  grid-column-gap: 100px;
+  grid-column-gap: 50px;
   padding: 20px;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
-  width: 500px;
 }
 .btn-group-container .dropdown-btn-group .dropdown-list-container__unroll .dropdown-list a {
   text-decoration: none;

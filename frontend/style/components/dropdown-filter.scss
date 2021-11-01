@@ -1,20 +1,20 @@
 .btn-group-container {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: auto auto auto;
   .dropdown-btn-group {
     display: flex;
     flex-direction: column;
-    width: 30%;
-    height: 70px !important;
+    width: fit-content;
     .dropdown-button {
       height: 70px !important;
-      width: 200px;
       border-radius: 5px;
       .dropdown-button__input {
         background-color: transparent;
         border: none;
         width: 130px;
         margin-right: 10px;
+        float: left;
+        color: white;
         &::placeholder {
           color: white;
           opacity: 1;
@@ -30,7 +30,7 @@
       }
     }
     .dropdown-button__unroll {
-      width: 500px;
+      width: auto;
       border-top-right-radius: 5px !important;
       border-bottom-left-radius: 0 !important;
       border-bottom-right-radius: 0 !important;
@@ -39,6 +39,8 @@
         border: none;
         width: 90%;
         margin-right: 10px;
+        float: left;
+        color: white;
         &::placeholder {
           color: white;
           opacity: 0.5;
@@ -53,17 +55,17 @@
     }
     .dropdown-list-container__unroll {
       display: flex;
-      width: 500px;
+      width: 100%;
       position: relative;
       z-index: 1;
       .dropdown-list {
+        width: 100%;
         display: grid;
         grid-template-columns: auto auto auto;
-        grid-column-gap: 100px;
+        grid-column-gap: 50px;
         padding: 20px;
         border-bottom-right-radius: 5px;
         border-bottom-left-radius: 5px;
-        width: 500px;
           a {
             text-decoration: none;
           }
