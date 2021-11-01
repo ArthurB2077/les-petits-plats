@@ -172,6 +172,36 @@ fetch('./../../api/data/recipe.json')
                 });
             }
         };
+        const isArrayIncludes = (arrayIncludes, arrayIncluding) => {
+            return arrayIncludes.every(item => arrayIncluding.includes(item))
+        };
+        const filterRecipesByTags = () => {
+            const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
+                item.getAttribute('style') === 'display: flex;'
+            )
+
+            tagItemsDisplayed.forEach(tagItem => {
+                tagItem.addEventListener('click', (event) => {
+                    filters.tagsBuilder(event.target.textContent);
+                    selectedTagsArray.push(event.target.textContent);
+                    event.target.style.display = 'none';
+                    document.getElementById('ingredients-list-input').value = '';
+
+                    recipeDisplayed.forEach(recipe => {
+                        const ingredients = []
+                        recipe.ingredients.forEach(ing => {
+                            ingredients.push(ing.ingredient)
+                        })
+
+                        if(isArrayIncludes(selectedTagsArray, ingredients)) {
+                            document.getElementById(`${recipe.id}`).style.display = 'flex';
+                        } else {
+                            document.getElementById(`${recipe.id}`).style.display = 'none';
+                        }
+                    })
+                })
+            })
+        }
 
         /**
          * Listen the global search bar and display recipes and tags associated by the input
@@ -212,32 +242,7 @@ fetch('./../../api/data/recipe.json')
                 }
             })
             filter.addEventListener('change', () => {
-                const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
-                    item.getAttribute('style') === 'display: flex;'
-                )
-
-                tagItemsDisplayed.forEach(tagItem => {
-                    tagItem.addEventListener('click', (event) => {
-                        filters.tagsBuilder(event.target.textContent);
-                        selectedTagsArray.push(event.target.textContent);
-                        event.target.style.display = 'none';
-                        document.getElementById('ingredients-list-input').value = '';
-
-                        recipeDisplayed.forEach(recipe => {
-                            const ingredients = []
-                            recipe.ingredients.forEach(ing => {
-                                ingredients.push(ing.ingredient)
-                            })
-                            console.log("Recipes ingredients", ingredients.sort().join())
-                            console.log("Tags ingredients", selectedTagsArray.sort().join())
-                            if(ingredients.sort().join().includes(selectedTagsArray.sort().join())) {
-                                document.getElementById(`${recipe.id}`).style.display = 'flex';
-                            } else {
-                                document.getElementById(`${recipe.id}`).style.display = 'none';
-                            }
-                        })
-                    })
-                })
+                filterRecipesByTags();
             })
             filter.addEventListener('focus', (event) => {
                 if (document.getElementById('searchbar-input').value.length < 3) {
@@ -252,18 +257,11 @@ fetch('./../../api/data/recipe.json')
                     el.style.display = 'flex';
                 });
 
-                const tagItemsDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item =>
-                    item.getAttribute('style') === 'display: flex;'
-                )
-                tagItemsDisplayed.forEach(tagItem => {
-                    tagItem.addEventListener('click', (event) => {
-                        filters.tagsBuilder(event.target.textContent);
-                        event.target.style.display = 'none';
-                        document.getElementById('ingredients-list-input').value = '';
-                    })
-                })
+                filterRecipesByTags();
             })
         })
+
+
     })
 
 export default Recipe;
