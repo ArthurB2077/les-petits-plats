@@ -13,11 +13,10 @@ class Recipe {
         this.name = name;
     }
 
-    get oneRecipe() {
-        return this.renderOneRecipe;
+    get renderRecipe() {
+        return this.recipeBuilder;
     }
-
-    renderOneRecipe() {
+    recipeBuilder() {
         /**
          * List of ingredients and quantity in recipes
          * @type {*}
@@ -107,7 +106,7 @@ fetch('./../../api/data/recipe.json')
     .then(recipes => {
         recipes.forEach(recipe => {
             const recipeToRender = new Recipe(recipe.id, recipe.ingredients, recipe.description, recipe.time, recipe.name);
-            recipeToRender.oneRecipe();
+            recipeToRender.renderRecipe();
         });
 
         let recipeDisplayed = recipes;
@@ -121,7 +120,7 @@ fetch('./../../api/data/recipe.json')
                 document.getElementById(`${recipe.id}`).style.display = 'flex';
             });
         };
-        const renderRecipesTags = (filteredRecipes) => {
+        const updateTagList = (filteredRecipes) => {
             const ingredientFilter = document.getElementById('ingredients-list');
             const deviceFilter = document.getElementById('devices-list');
             const utensilFilter = document.getElementById('utensils-list');
@@ -219,7 +218,7 @@ fetch('./../../api/data/recipe.json')
                     event.target.style.display = 'none';
                     document.getElementById(`${filterName}-input`).value = '';
 
-                    recipeDisplayed.forEach(recipe => {
+                    recipes.forEach(recipe => {
                         filterRecipes(recipe);
                     });
 
@@ -227,25 +226,25 @@ fetch('./../../api/data/recipe.json')
                         if (selectedIngredientsArray.length !== 0) {
                             const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
                             const filterCriteria = domRecipes.map(item => item.id);
-                            renderRecipesTags(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                            updateTagList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
                         } else {
-                            renderRecipesTags(recipes);
+                            updateTagList(recipes);
                         }
                     } else if (event.target.getAttribute('data-group-name') === "selectedUtensilsArray") {
                         if (selectedUtensilsArray.length !== 0) {
                             const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
                             const filterCriteria = domRecipes.map(item => item.id);
-                            renderRecipesTags(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                            updateTagList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
                         } else {
-                            renderRecipesTags(recipes);
+                            updateTagList(recipes);
                         }
                     } else if (event.target.getAttribute('data-group-name') === "selectedApplianceArray") {
                         if (selectedApplianceArray.length !== 0) {
                             const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
                             const filterCriteria = domRecipes.map(item => item.id);
-                            renderRecipesTags(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                            updateTagList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
                         } else {
-                            renderRecipesTags(recipes);
+                            updateTagList(recipes);
                         }
                     }
                 })
@@ -255,14 +254,14 @@ fetch('./../../api/data/recipe.json')
             if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
                 const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
                 const filterCriteria = domRecipes.map(item => item.id);
-                renderRecipesTags(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                updateTagList(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
             } else {
-                renderRecipesTags(recipesArray);
+                updateTagList(recipesArray);
             }
         };
 
         /**
-         * Listen the global search bar and display recipes and tags associated by the input
+         *
          */
         document.getElementById('searchbar-input').addEventListener('input', (event) => {
             if (event.target.value.length > 2) {
@@ -273,17 +272,13 @@ fetch('./../../api/data/recipe.json')
                  * filter the recipes depending on the selected tags
                  */
                 if(selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-                    recipeDisplayed.forEach(recipe => {
-                        filterRecipes(recipe);
-                    })
+                    recipeDisplayed.forEach(recipe => filterRecipes(recipe));
                 }
                 displayTagInListBySelectedTags(recipeDisplayed);
             } else {
                 renderDisplayedRecipes(recipes);
                 if(selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-                    recipes.forEach(recipe => {
-                        filterRecipes(recipe);
-                    })
+                    recipes.forEach(recipe => filterRecipes(recipe));
                 }
                 displayTagInListBySelectedTags(recipes);
             }
@@ -304,9 +299,6 @@ fetch('./../../api/data/recipe.json')
             })
         });
 
-        /**
-         * Allow the filtering of ingredients, utensils and devices in function of inputs values in tags search bars
-         */
         Array.from(document.getElementsByClassName('dropdown-button__input')).forEach(filter => {
             filter.addEventListener('input', (event) => {
                 const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
@@ -326,10 +318,10 @@ fetch('./../../api/data/recipe.json')
                         el.style.display = 'flex';
                     });
                 }
-            })
+            });
             filter.addEventListener('change', (event) => {
                 filterRecipesByTags(event.target.getAttribute('data-name'));
-            })
+            });
             filter.addEventListener('focus', (event) => {
                 if (document.getElementById('searchbar-input').value.length < 3) {
                     displayTagInListBySelectedTags(recipes);
@@ -338,7 +330,7 @@ fetch('./../../api/data/recipe.json')
                 const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
                 const elementsToFilter = Array.from(parentElement.children);
                 const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
-                const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
+                const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent));
 
                 if(event.target.value.length > 2) {
                     elementsFiltered.forEach(el => {
@@ -352,9 +344,8 @@ fetch('./../../api/data/recipe.json')
                         el.style.display = 'flex';
                     });
                 }
-
                 filterRecipesByTags(event.target.getAttribute('data-name'));
-            })
+            });
         });
 
         document.getElementById('tags').addEventListener('mouseover', () => {
