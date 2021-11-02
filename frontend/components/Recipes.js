@@ -249,9 +249,8 @@ fetch('./../../api/data/recipe.json')
             })
         };
 
-        /**
-         *
-         */
+        document.getElementById('searchbar-input').focus();
+
         document.getElementById('searchbar-input').addEventListener('input', (event) => {
             if (event.target.value.length > 2) {
                 recipeDisplayed = findInput(`${event.target.value}`, recipes);
