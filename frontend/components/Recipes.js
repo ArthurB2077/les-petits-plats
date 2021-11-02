@@ -356,7 +356,7 @@ fetch('./../../api/data/recipe.json')
                         })
                     }
 
-                    displayTagInListBySelectedTags(recipes);
+                    displayTagInListBySelectedTags(recipeDisplayed);
                 })
             })
         })
