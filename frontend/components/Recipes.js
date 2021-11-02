@@ -199,7 +199,7 @@ fetch('./../../api/data/recipe.json')
                     })
                 })
             })
-        }
+        };
 
         /**
          * Listen the global search bar and display recipes and tags associated by the input
@@ -272,16 +272,32 @@ fetch('./../../api/data/recipe.json')
             })
             filter.addEventListener('focus', (event) => {
                 if (document.getElementById('searchbar-input').value.length < 3) {
-                    renderRecipesTags(recipeDisplayed);
+                    if (selectedTagsArray.length !== 0) {
+                        const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                        const filterCriteria = domRecipes.map(item => item.id);
+                        renderRecipesTags(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                    } else {
+                        renderRecipesTags(recipes);
+                    }
                 }
+
                 const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
                 const elementsToFilter = Array.from(parentElement.children);
                 const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
                 const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
 
-                elementsFiltered.forEach(el => {
-                    el.style.display = 'flex';
-                });
+                if(event.target.value.length > 2) {
+                    elementsFiltered.forEach(el => {
+                        el.style.display = 'flex';
+                    });
+                    elementsFiltered.forEach(el => {
+                        if (!(el.textContent.toLowerCase().includes(event.target.value.toLowerCase()))) {el.style.display = 'none';}
+                    });
+                } else {
+                    elementsFiltered.forEach(el => {
+                        el.style.display = 'flex';
+                    });
+                }
 
                 filterRecipesByTags();
             })
