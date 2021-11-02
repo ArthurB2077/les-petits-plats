@@ -29,16 +29,19 @@ export const findInput = (input, datas) => {
      * ForEach method: create an empty array edit and add filtered elements with the forEach method
      * @type {*[]}
      */
-    const filteredArray = [];
-    datas.forEach(el => {
-        const criteria = [el.name, el.description, el.ingredients];
-        const responseSearch = [];
-        searchRecursively(criteria, input, responseSearch)
-        if (responseSearch.length !== 0) {
-            filteredArray.push(el);
-        }
-    });
-    return filteredArray;
-
+    if(input) {
+        const filteredArray = [];
+        datas.forEach(el => {
+            const criteria = [el.name, el.description, el.ingredients];
+            const responseSearch = [];
+            searchRecursively(criteria, input, responseSearch)
+            if (responseSearch.length !== 0) {
+                filteredArray.push(el);
+            }
+        });
+        return filteredArray;
+    } else {
+        return datas;
+    }
 }
 
