@@ -122,6 +122,16 @@ fetch('./../../api/data/recipe.json')
                 return arrayIncluded.every(item => arrayIncluding.map(item => item.toLowerCase()).includes(item.toLowerCase()));
             }
         };
+        const removeFilterChildren = (...filters) => {
+            filters.forEach(filter => Array.from(filter.childNodes).forEach(child => child.remove()));
+        };
+        const createFilterChildren = (noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) => {
+            noDuplicateFilters.forEach((tag) => {
+                if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
+                    filter.appendChild(factory.createDOMElement('a', { class: `dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
+                }
+            });
+        }
         const updateDropdownList = (newRecipes) => {
             const ingredientFilter = document.getElementById('ingredients-list');
             const deviceFilter = document.getElementById('devices-list');
@@ -132,51 +142,21 @@ fetch('./../../api/data/recipe.json')
             const preventDoppelgangerDev = [];
 
             if (newRecipes.length !== 0) {
-                Array.from(ingredientFilter.childNodes).forEach(child => {
-                    child.remove();
-                });
-                Array.from(deviceFilter.childNodes).forEach(child => {
-                    child.remove();
-                });
-                Array.from(utensilFilter.childNodes).forEach(child => {
-                    child.remove();
-                });
-
+                removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
                 newRecipes.forEach(recipe => {
                     recipe.ingredients.forEach(ing => {
                         if (!(preventDoppelgangerIng.includes(ing.ingredient.toLowerCase()))){preventDoppelgangerIng.push(ing.ingredient.toLowerCase());}
-                    })
+                    });
                     if (!preventDoppelgangerDev.includes(recipe.appliance.toLowerCase())){preventDoppelgangerDev.push(recipe.appliance.toLowerCase());}
                     recipe.ustensils.forEach(ust => {
                         if (!preventDoppelgangerUst.includes(ust.toLowerCase())){preventDoppelgangerUst.push(ust.toLowerCase());}
-                    })
+                    });
                 });
-
-                preventDoppelgangerIng.forEach((ing) => {
-                    if (!(tags.includes(ing.replace(ing[0], ing[0].toUpperCase())))) {
-                        ingredientFilter.appendChild(factory.createDOMElement('a', { class: 'dropdown-filter-item__ingredients text-white', href: '#', 'data-group-name': 'selectedIngredientsArray' }, `${ing.replace(ing[0], ing[0].toUpperCase())}`));
-                    }
-                });
-                preventDoppelgangerDev.forEach(dev => {
-                    if (!(tags.includes(dev.replace(dev[0], dev[0].toUpperCase())))) {
-                        deviceFilter.appendChild(factory.createDOMElement('a', { class: 'dropdown-filter-item__devices text-white', href: '#', 'data-group-name': 'selectedApplianceArray' }, `${dev.replace(dev[0], dev[0].toUpperCase())}`));
-                    }
-                });
-                preventDoppelgangerUst.forEach(ust => {
-                    if (!(tags.includes(ust.replace(ust[0], ust[0].toUpperCase())))) {
-                        utensilFilter.appendChild(factory.createDOMElement('a', { class: 'dropdown-filter-item__utensils text-white', href: '#', 'data-group-name': 'selectedUtensilsArray' }, `${ust.replace(ust[0], ust[0].toUpperCase())}`));
-                    }
-                });
+                createFilterChildren(preventDoppelgangerIng, ingredientFilter, tags, 'ingredients', 'selectedIngredientsArray');
+                createFilterChildren(preventDoppelgangerDev, deviceFilter, tags, 'devices', 'selectedApplianceArray');
+                createFilterChildren(preventDoppelgangerUst, utensilFilter, tags, 'utensils', 'selectedUtensilsArray');
             } else {
-                Array.from(ingredientFilter.childNodes).forEach(child => {
-                    child.remove();
-                });
-                Array.from(deviceFilter.childNodes).forEach(child => {
-                    child.remove();
-                });
-                Array.from(utensilFilter.childNodes).forEach(child => {
-                    child.remove();
-                });
+                removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
             }
         };
         const updateDropdownListByTags = (recipesArray) => {
@@ -213,44 +193,57 @@ fetch('./../../api/data/recipe.json')
             tagItemsDisplayed.forEach(tagItem => {
                 tagItem.addEventListener('click', (event) => {
                     filters.tagsBuilder(event.target.textContent, tagType);
-                    if (event.target.getAttribute('data-group-name') === "selectedIngredientsArray") {
-                        selectedIngredientsArray.push(event.target.textContent);
-                    } else if (event.target.getAttribute('data-group-name') === "selectedUtensilsArray") {
-                        selectedUtensilsArray.push(event.target.textContent);
-                    } else if (event.target.getAttribute('data-group-name') === "selectedApplianceArray") {
-                        selectedApplianceArray.push(event.target.textContent);
+                    switch (event.target.getAttribute('data-group-name')) {
+                        case 'selectedIngredientsArray':
+                            selectedIngredientsArray.push(event.target.textContent);
+                            break;
+                        case 'selectedUtensilsArray':
+                            selectedUtensilsArray.push(event.target.textContent);
+                            break;
+                        case 'selectedApplianceArray':
+                            selectedApplianceArray.push(event.target.textContent);
+                            break;
+                        default:
+                            break;
                     }
                     event.target.style.display = 'none';
                     document.getElementById(`${tagType}-input`).value = '';
-
                     recipes.forEach(recipe => {
                         displayRecipesBySelectedTags(recipe);
                     });
-
-                    if (event.target.getAttribute('data-group-name') === "selectedIngredientsArray") {
-                        if (selectedIngredientsArray.length !== 0) {
-                            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                            const filterCriteria = domRecipes.map(item => item.id);
-                            updateDropdownList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                        } else {
-                            updateDropdownList(recipes);
+                    switch (event.target.getAttribute('data-group-name')) {
+                        case 'selectedIngredientsArray': {
+                            if (selectedIngredientsArray.length !== 0) {
+                                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                                const filterCriteria = domRecipes.map(item => item.id);
+                                updateDropdownList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                            } else {
+                                updateDropdownList(recipes);
+                            }
+                            break;
                         }
-                    } else if (event.target.getAttribute('data-group-name') === "selectedUtensilsArray") {
-                        if (selectedUtensilsArray.length !== 0) {
-                            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                            const filterCriteria = domRecipes.map(item => item.id);
-                            updateDropdownList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                        } else {
-                            updateDropdownList(recipes);
+                        case 'selectedUtensilsArray': {
+                            if (selectedUtensilsArray.length !== 0) {
+                                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                                const filterCriteria = domRecipes.map(item => item.id);
+                                updateDropdownList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                            } else {
+                                updateDropdownList(recipes);
+                            }
+                            break;
                         }
-                    } else if (event.target.getAttribute('data-group-name') === "selectedApplianceArray") {
-                        if (selectedApplianceArray.length !== 0) {
-                            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                            const filterCriteria = domRecipes.map(item => item.id);
-                            updateDropdownList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                        } else {
-                            updateDropdownList(recipes);
+                        case 'selectedApplianceArray': {
+                            if (selectedApplianceArray.length !== 0) {
+                                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                                const filterCriteria = domRecipes.map(item => item.id);
+                                updateDropdownList(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                            } else {
+                                updateDropdownList(recipes);
+                            }
+                            break;
                         }
+                        default:
+                            break;
                     }
                 })
             })
@@ -425,4 +418,4 @@ fetch('./../../api/data/recipe.json')
         })
     })
 
-export default Recipe;
+export default Recipes;
