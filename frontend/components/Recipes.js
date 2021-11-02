@@ -196,9 +196,26 @@ fetch('./../../api/data/recipe.json')
                         } else {
                             document.getElementById(`${recipe.id}`).style.display = 'none';
                         }
-                    })
+                    });
+
+                    if (selectedTagsArray.length !== 0) {
+                        const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                        const filterCriteria = domRecipes.map(item => item.id);
+                        renderRecipesTags(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                    } else {
+                        renderRecipesTags(recipes);
+                    }
                 })
             })
+        };
+        const displayTagInListBySelectedTags = (recipesArray) => {
+            if (selectedTagsArray.length !== 0) {
+                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                const filterCriteria = domRecipes.map(item => item.id);
+                renderRecipesTags(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+            } else {
+                renderRecipesTags(recipesArray);
+            }
         };
 
         /**
@@ -208,7 +225,7 @@ fetch('./../../api/data/recipe.json')
             if (event.target.value.length > 2) {
                 recipeDisplayed = findInput(`${event.target.value}`, recipes);
                 renderDisplayedRecipes(recipeDisplayed);
-                renderRecipesTags(recipeDisplayed);
+
                 if(selectedTagsArray.length !== 0) {
                     recipeDisplayed.forEach(recipe => {
                         const ingredients = []
@@ -223,9 +240,11 @@ fetch('./../../api/data/recipe.json')
                         }
                     })
                 }
+
+                displayTagInListBySelectedTags(recipeDisplayed);
             } else {
                 renderDisplayedRecipes(recipes);
-                renderRecipesTags(recipes);
+
                 if(selectedTagsArray.length !== 0) {
                     recipes.forEach(recipe => {
                         const ingredients = []
@@ -240,8 +259,9 @@ fetch('./../../api/data/recipe.json')
                         }
                     })
                 }
-            }
 
+                displayTagInListBySelectedTags(recipes);
+            }
         });
 
         /**
@@ -272,13 +292,7 @@ fetch('./../../api/data/recipe.json')
             })
             filter.addEventListener('focus', (event) => {
                 if (document.getElementById('searchbar-input').value.length < 3) {
-                    if (selectedTagsArray.length !== 0) {
-                        const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                        const filterCriteria = domRecipes.map(item => item.id);
-                        renderRecipesTags(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                    } else {
-                        renderRecipesTags(recipes);
-                    }
+                    displayTagInListBySelectedTags(recipes);
                 }
 
                 const parentElement = event.target.parentElement.nextElementSibling.firstElementChild;
@@ -310,7 +324,8 @@ fetch('./../../api/data/recipe.json')
                     const tagToClose = event.target.parentElement;
                     const tagItemsNotDisplayed = Array.from(document.getElementsByClassName('dropdown-filter-item')).filter(item => item.getAttribute('style') === 'display: none;');
 
-                    tagToClose.remove()
+                    tagToClose.remove();
+
                     selectedTagsArray.forEach((tag, index) => {
                         if (tag === event.target.parentElement.firstElementChild.textContent) {
                             selectedTagsArray.splice(index, 1);
@@ -320,16 +335,17 @@ fetch('./../../api/data/recipe.json')
                                 }
                             })
                         }
-                    })
+                    });
+
                     if (selectedTagsArray.length === 0) {
                         recipeDisplayed = findInput(`${document.getElementById('searchbar-input').value}`, recipes);
                         renderDisplayedRecipes(recipeDisplayed);
                     } else {
                         recipeDisplayed = findInput(`${document.getElementById('searchbar-input').value}`, recipes);
                         recipeDisplayed.forEach(recipe => {
-                            const ingredients = []
+                            const ingredients = [];
                             recipe.ingredients.forEach(ing => {
-                                ingredients.push(ing.ingredient)
+                                ingredients.push(ing.ingredient);
                             })
 
                             if(isArrayIncludes(selectedTagsArray, ingredients)) {
@@ -339,10 +355,11 @@ fetch('./../../api/data/recipe.json')
                             }
                         })
                     }
+
+                    displayTagInListBySelectedTags(recipes);
                 })
             })
         })
-
     })
 
 export default Recipe;
