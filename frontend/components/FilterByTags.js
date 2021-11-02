@@ -76,7 +76,8 @@ class FilterByTags {
                     dropdownIcon.style.transform = 'rotate(180deg)';
                     dropdownInput.setAttribute('placeholder', `Rechercher un ${filter.title.toLowerCase()}`);
                     dropdownInput.removeAttribute('disabled');
-                    event.target.setAttribute('data-toggle', 'unrolled')
+                    event.target.setAttribute('data-toggle', 'unrolled');
+                    document.getElementById(`${filter.id}-input`).focus()
                 } else if (event.target.getAttribute('data-toggle') === 'unrolled') {
                     dropdownContainer.classList.replace('dropdown-list-container__unroll', 'dropdown-list-container');
                     dropdownButton.classList.replace('dropdown-button__unroll', 'dropdown-button');

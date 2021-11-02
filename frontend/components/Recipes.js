@@ -260,6 +260,13 @@ fetch('./../../api/data/recipe.json')
             }
         });
 
+        document.getElementById('searchbar-input').addEventListener('blur', () => {
+            document.getElementById('ingredients-list').addEventListener('mouseover', event => {
+                const filterInput = document.getElementById('ingredients-list-input');
+                filterInput.focus();
+            })
+        });
+
         /**
          * Allow the filtering of ingredients, utensils and devices in function of inputs values in tags search bars
          */
@@ -311,7 +318,7 @@ fetch('./../../api/data/recipe.json')
 
                 filterRecipesByTags();
             })
-        })
+        });
 
         document.getElementById('tags').addEventListener('mouseover', () => {
             const tagsCloseButtons = Array.from(document.getElementsByClassName('close-tag'));
@@ -353,41 +360,6 @@ fetch('./../../api/data/recipe.json')
                     }
 
                     displayTagInListBySelectedTags(recipeDisplayed);
-                })
-            })
-        })
-
-
-        document.getElementById('searchbar-input').addEventListener('blur', () => {
-            document.getElementById('ingredients-list').addEventListener('mouseover', event => {
-                const tagItem = event.target;
-
-                tagItem.addEventListener('click', (event) => {
-                    filters.tagsBuilder(event.target.textContent);
-                    selectedTagsArray.push(event.target.textContent);
-                    event.target.style.display = 'none';
-                    document.getElementById('ingredients-list-input').value = '';
-
-                    recipeDisplayed.forEach(recipe => {
-                        const ingredients = []
-                        recipe.ingredients.forEach(ing => {
-                            ingredients.push(ing.ingredient)
-                        })
-
-                        if(isArrayIncludes(selectedTagsArray, ingredients)) {
-                            document.getElementById(`${recipe.id}`).style.display = 'flex';
-                        } else {
-                            document.getElementById(`${recipe.id}`).style.display = 'none';
-                        }
-                    });
-
-                    if (selectedTagsArray.length !== 0) {
-                        const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                        const filterCriteria = domRecipes.map(item => item.id);
-                        renderRecipesTags(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                    } else {
-                        renderRecipesTags(recipes);
-                    }
                 })
             })
         })
