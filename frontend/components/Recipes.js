@@ -441,7 +441,10 @@ fetch('./../../api/data/recipe.json')
                         }
                         case 'utensils': {
                             removeTag(selectedUtensilsArray, event.target, tagItemsNotDisplayed);
+                            break;
                         }
+                        default:
+                            break;
                     }
                     document.getElementById(`${tagGroup}-input`).focus();
                 });
