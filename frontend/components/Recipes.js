@@ -165,6 +165,21 @@ fetch('./../../api/data/recipe.json')
             }
         };
         /**
+         * This function display a message if no recipes are found
+         */
+        const isNoResultsForSearch = () => {
+            const recipesDisplay = Array.from(document.getElementsByClassName('recipe')).filter(rec => rec.getAttribute('style') === 'display: flex;');
+            if (recipesDisplay.length === 0) {
+                if (!document.getElementById('recipe-not-found')) {
+                    document.getElementById('recipes').appendChild(factory.createDOMElement('p', { id: 'recipe-not-found', class: 'text-center' }, '« Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson », etc.'));
+                }
+            } else {
+                if (!document.getElementById('recipe-not-found')) {
+                    document.getElementById('recipe-not-found').remove();
+                }
+            }
+        };
+        /**
          * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
          * filter list
          * @param filters => The dropdown list in which his children need to be remove
@@ -403,12 +418,14 @@ fetch('./../../api/data/recipe.json')
                     recipeDisplayed.forEach(recipe => displayRecipesBySelectedTags(recipe));
                 }
                 updateFiltersChildrenByTags(recipeDisplayed);
+                isNoResultsForSearch();
             } else {
                 displayRecipes(recipes);
                 if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
                     recipes.forEach(recipe => displayRecipesBySelectedTags(recipe));
                 }
                 updateFiltersChildrenByTags(recipes);
+                isNoResultsForSearch();
             }
         });
         /**

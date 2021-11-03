@@ -5,6 +5,7 @@
   .btn-group-container {
     display: inline-grid;
     grid-template-columns: auto auto auto;
+    margin-top: 10px;
     @media all and (min-width: 200px) and (max-width: 1035px) {
       grid-template-columns: auto;
       width: 100%;
