@@ -106,14 +106,36 @@ fetch('./../../api/data/recipe.json')
         return res.json();
     })
     .then(recipes => {
+        /**
+         * This instance allow to create all the recipes from the retrieved json. After that, the following methods
+         * allow to create a container for recipes and the recipes themself.
+         * @type {Recipes}
+         */
         const recipesToRender = new Recipes(recipes);
         recipesToRender.renderRecipeContainer();
         recipesToRender.renderRecipes();
+        /**
+         * Global variable that will hold the state of display recipes.
+         * @type {Array}
+         */
         let recipeDisplayed = recipes;
+        /**
+         * This 3 global variables will hold the state of selected tags per family (ingredients, devices, utensils).
+         * @type {Array, Array, Array}
+         */
         const selectedIngredientsArray = [];
         const selectedUtensilsArray = [];
         const selectedApplianceArray = [];
-
+        /**
+         * This function take two array in input and check if the elements of the first array are include in the
+         * second array and return if it's true or false. If the first array is empty return true. Why that ? Because
+         * we want to display recipes that contains filter in the first and second and third array. So, if the first
+         * array is empty it has to return true for the triple logical "and" will return true when we want to check if
+         * all the content of the selected arrays are including in the content of recipes properties
+         * @param arrayIncluded => Array that will receive selected tags
+         * @param arrayIncluding => Array that will receive the recipes properties corresponding to selected tags
+         * @returns {boolean|*} => Boolean that validate or not if the recipe contain selected tags
+         */
         const isArrayIncludesInAnotherArray = (arrayIncluded, arrayIncluding) => {
             if (arrayIncluded.length === 0) {
                 return true;
@@ -121,15 +143,32 @@ fetch('./../../api/data/recipe.json')
                 return arrayIncluded.every(item => arrayIncluding.map(item => item.toLowerCase()).includes(item.toLowerCase()));
             }
         };
-        const giveFocusOnOver = (element) => {
-            document.getElementById(`${element}-list`).addEventListener('mouseover', () => {
-                const filterInput = document.getElementById(`${element}_input`);
-                filterInput.focus();
-            })
+        /**
+         * This function give the focus to the first filter search open after the main search lost focus
+         */
+        const giveFocusOnOver = () => {
+            const openDropdown = Array.from(document.getElementsByClassName('dropdown-button__unroll'))
+            if (openDropdown.length !== 0) {
+                openDropdown[0].focus();
+            }
         };
+        /**
+         * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
+         * filter list
+         * @param filters => The dropdown list in which his children need to be remove
+         */
         const removeFilterChildren = (...filters) => {
             filters.forEach(filter => Array.from(filter.childNodes).forEach(child => child.remove()));
         };
+        /**
+         * This function take in input all the informations to create the children of a dropdown list and create all his
+         * children
+         * @param noDuplicateFilters => Arrays of tags with no duplicates to insert in dropdown list
+         * @param filter => The dropdown list which will receive the tags to display
+         * @param tagsArray => Array of the actual selected tags to prevent to insert in the dropdown list selected tags
+         * @param filterType => Family of the tags (ingredients, devices, utensils)
+         * @param selectedTagsArrayName => Selected tags array corresponding to the family tag
+         */
         const createFilterChildren = (noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) => {
             noDuplicateFilters.forEach((tag) => {
                 if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
@@ -137,6 +176,10 @@ fetch('./../../api/data/recipe.json')
                 }
             });
         }
+        /**
+         * This function handle the refresh of the tag items in the dropdown list depending of the recipes display
+         * @param newRecipes => Array containing the recipes display
+         */
         const updateFiltersChildren = (newRecipes) => {
             const ingredientFilter = document.getElementById('ingredients-list');
             const deviceFilter = document.getElementById('devices-list');
@@ -164,6 +207,11 @@ fetch('./../../api/data/recipe.json')
                 removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
             }
         };
+        /**
+         * This function handle the refresh of the tags items in the dropdown list depending of the tags selected
+         * and the recipes
+         * @param recipesArray => Array of display recipes which allow dropdown list children to be filtered
+         */
         const updateFiltersChildrenByTags = (recipesArray) => {
             if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
                 const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
@@ -173,7 +221,12 @@ fetch('./../../api/data/recipe.json')
                 updateFiltersChildren(recipesArray);
             }
         };
-        const displayFilterChildren = (element) => {
+        /**
+         * This function handle the refresh of the tags items in the dropdown list depending on what the user is typing
+         * in the filter input (ingredients, devices, utensils)
+         * @param element
+         */
+        const updateFilterChildrenByInputValue = (element) => {
             const parentElement = element.parentElement.nextElementSibling.firstElementChild;
             const elementsToFilter = Array.from(parentElement.children);
             const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
@@ -192,10 +245,19 @@ fetch('./../../api/data/recipe.json')
                 });
             }
         };
+        /**
+         * This function hide all recipes and, after that, display only those it had receive in input
+         * @param recipesToDisplay => Array of recipes to be display
+         */
         const displayRecipes = (recipesToDisplay) => {
             Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none');
             recipesToDisplay.forEach(recipe => document.getElementById(`${recipe.id}`).style.display = 'flex');
         };
+        /**
+         * This function filters recipes by selected tags. If the recipes have properties that matching the selected
+         * tags, those recipes are display
+         * @param recipeToFilter => Array holding the recipes to be filtered
+         */
         const displayRecipesBySelectedTags = (recipeToFilter) => {
             const ingredients = [];
             const appliance = [];
@@ -212,6 +274,12 @@ fetch('./../../api/data/recipe.json')
                 document.getElementById(`${recipeToFilter.id}`).style.display = 'none';
             }
         };
+        /**
+         * This function listen all the dropdown list items. If a item is clicked, it's building the tag and add it's
+         * value to the global variable of corresponding selected tags array. It also withdraw the item from the list,
+         * filter the recipes and refresh the dropdown list depending on the new selected tag.
+         * @param tagType => Ingredients, devices or utensils
+         */
         const displayTag = (tagType) => {
             const tagItemsDisplayed = Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagType}`)).filter(item => item.getAttribute('style') === 'display: flex;');
             tagItemsDisplayed.forEach(tagItem => {
@@ -269,9 +337,16 @@ fetch('./../../api/data/recipe.json')
                         default:
                             break;
                     }
-                })
-            })
+                });
+            });
         };
+        /**
+         * This function remove tag by withdraw it from the corresponding selected tags array, refresh filtered recipes
+         * and refresh content of the dropdown filter list
+         * @param selectedTagArray => Array holding the actual selected tags
+         * @param element => The tags DOM element which will receive the close event
+         * @param tagsNotDisplayed => Array holding the actual tags hide in the dropdown list because they're selected
+         */
         const removeTag = (selectedTagArray, element, tagsNotDisplayed) => {
             selectedTagArray.forEach((tag, index) => {
                 if (tag === element.parentElement.firstElementChild.textContent) {
@@ -294,17 +369,24 @@ fetch('./../../api/data/recipe.json')
             }
             updateFiltersChildrenByTags(recipeDisplayed);
         };
-
+        /**
+         * On load give the focus to the main search bar
+         */
         document.getElementById('searchbar-input').focus();
-
+        /**
+         * When the main searchbar lost focus, this event give it to the first open searchbar filter open
+         */
+        document.getElementById('searchbar-input').addEventListener('blur', () => {
+            giveFocusOnOver();
+        });
+        /**
+         * Event listener that filter the displayed recipes depending on the user input value. It has a condition to
+         * handle the case where a new search is initialise and a tag or more are already selected
+         */
         document.getElementById('searchbar-input').addEventListener('input', (event) => {
             if (event.target.value.length > 2) {
                 recipeDisplayed = findInput(`${event.target.value}`, recipes);
                 displayRecipes(recipeDisplayed);
-                /**
-                 * If a new search is initialise check if tags as already selected in a previous search. If it the case,
-                 * filter the recipes depending on the selected tags
-                 */
                 if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
                     recipeDisplayed.forEach(recipe => displayRecipesBySelectedTags(recipe));
                 }
@@ -317,16 +399,14 @@ fetch('./../../api/data/recipe.json')
                 updateFiltersChildrenByTags(recipes);
             }
         });
-
-        document.getElementById('searchbar-input').addEventListener('blur', () => {
-            giveFocusOnOver('ingredients');
-            giveFocusOnOver('utensils');
-            giveFocusOnOver('devices');
-        });
-
+        /**
+         * Handle each type of events that the filters input can receive. Depending of the event types, it's updating
+         * the content of the dropdown list depending on the input value, display a tag if one dropdown list item is
+         * clicked and update them if a tag is selected
+         */
         Array.from(document.getElementsByClassName('dropdown-button__input')).forEach(filter => {
             filter.addEventListener('input', (event) => {
-                displayFilterChildren(event.target);
+                updateFilterChildrenByInputValue(event.target);
             });
             filter.addEventListener('change', (event) => {
                 displayTag(event.target.getAttribute('data-name'));
@@ -335,11 +415,13 @@ fetch('./../../api/data/recipe.json')
                 if (document.getElementById('searchbar-input').value.length < 3) {
                     updateFiltersChildrenByTags(recipes);
                 }
-                displayFilterChildren(event.target);
+                updateFilterChildrenByInputValue(event.target);
                 displayTag(event.target.getAttribute('data-name'));
             });
         });
-
+        /**
+         * Handle the close of a tag and call the appropriate functions for remove it
+         */
         document.getElementById('tags').addEventListener('mouseover', () => {
             const tagsCloseButtons = Array.from(document.getElementsByClassName('close-tag'));
             tagsCloseButtons.forEach(closeTag => {
@@ -361,9 +443,10 @@ fetch('./../../api/data/recipe.json')
                             removeTag(selectedUtensilsArray, event.target, tagItemsNotDisplayed);
                         }
                     }
-                })
-            })
-        })
-    })
+                    document.getElementById(`${tagGroup}-input`).focus();
+                });
+            });
+        });
+    });
 
 export default Recipes;
