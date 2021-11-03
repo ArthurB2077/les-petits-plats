@@ -3,19 +3,20 @@
 #recipes {
   display: grid;
   grid-template-columns: auto auto auto;
-  grid-column-gap: 5%;
-  grid-row-gap: 1%;
-  @media all and (min-width: 1030px) and (max-width: 1690px) {
-    grid-template-columns: auto auto;
-    grid-column-gap: 8%;
+  grid-gap: 5em;
+  margin-top: 3em;
+  justify-content: space-between;
+  @media all and (min-width: 1311px) and (max-width: 1690px) {
+    grid-template-columns: auto auto auto;
+    grid-gap: 3em;
   }
-  @media all and (min-width: 200px) and (max-width: 1480px) {
-    grid-column-gap: 10%;
+  @media all and (min-width: 1030px) and (max-width: 1310px) {
+    grid-template-columns: auto auto;
+    grid-gap: 5em;
   }
   @media all and (min-width: 200px) and (max-width: 1029px) {
     grid-template-columns: auto;
-    grid-row-gap: 100px;
-    padding: 50px;
+    justify-content: center;
   }
   @media all and (min-width: 200px) and (max-width: 679px) {
     padding: 0;
@@ -28,10 +29,17 @@
   .recipe {
     display: flex;
     height: 450px;
+    max-width: 450px;
     border-radius: 5px;
     z-index: 0;
-    @media all and (min-width: 200px) and (max-width: 300px) {
-      height: 500px !important;
+    @media all and (min-width: 1311px) and (max-width: 1690px) {
+      height: 400px;
+    }
+    @media all and (min-width: 300px) and (max-width: 1310px) {
+      width: 100%;
+    }
+    @media all and (min-width: 200px) and (max-width: 400px) {
+      height: 600px !important;
     }
     .recipe-img {
       background: $secondary-bg-color;
@@ -59,7 +67,15 @@
       }
       .recipe-method {
         max-height: 75%;
+        @media all and (min-width: 200px) and (max-width: 400px) {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
         .recipe-ingredients {
+          @media all and (min-width: 200px) and (max-width: 400px) {
+            width: 100% !important;
+          }
           ul {
             list-style: none;
             li {
@@ -73,6 +89,9 @@
           display: inline-block;
           overflow: hidden;
           text-overflow: ellipsis;
+          @media all and (min-width: 200px) and (max-width: 400px) {
+            width: 100% !important;
+          }
         }
       }
     }
