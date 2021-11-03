@@ -28,8 +28,8 @@
   }
   .recipe {
     display: flex;
-    height: 450px;
-    max-width: 450px;
+    height: 480px;
+    max-width: 480px;
     border-radius: 5px;
     z-index: 0;
     @media all and (min-width: 1311px) and (max-width: 1690px) {
@@ -85,13 +85,51 @@
         }
         .recipe-instructions {
           font-size: 12px !important;
-          max-height: border-box;
-          display: inline-block;
           overflow: hidden;
+          line-height: $line-h;
+          max-height: calc(#{$line-h }* #{$nth-lines-trunc});
+          text-align: justify;
+          padding-right: 10px;
+          margin: 0 auto;
           text-overflow: ellipsis;
+          //position: relative;
+          &::after {
+            content: '...';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            margin-left: 3px;
+            text-overflow: ellipsis;
+          }
           @media all and (min-width: 200px) and (max-width: 400px) {
             width: 100% !important;
           }
+          //&:hover {
+          //  font-size: inherit;
+          //  max-height: inherit;
+          //  display: inline-block;
+          //  overflow: inherit;
+          //  text-overflow: inherit;
+          //  position: relative;
+          //  z-index: 3;
+          //  background: $primary-bg-color;
+          //  color: black;
+          //  height: 450px !important;
+          //  padding: 10px;
+          //  border-radius: 5px;
+          //  bottom: 290px;
+          //  left: 16px;
+          //  right: 0;
+          //  opacity: 0.90;
+          //  transition: width ease .6s;
+          //  cursor: text;
+          //  @media all and (min-width: 1311px) and (max-width: 1690px) {
+          //    height: 400px;
+          //  }
+          //  @media all and (min-width: 200px) and (max-width: 400px) {
+          //    height: 600px !important;
+          //  }
+          //}
         }
       }
     }
