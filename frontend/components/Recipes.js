@@ -147,7 +147,10 @@ fetch('./../../api/data/recipe.json')
          * This function give the focus to the first filter search open after the main search lost focus
          */
         const giveFocusOnOver = () => {
-            Array.from(document.getElementsByClassName('dropdown-button__unroll'))[0].focus();
+            const openDropdown = Array.from(document.getElementsByClassName('dropdown-button__unroll'))
+            if (openDropdown.length !== 0) {
+                openDropdown[0].focus();
+            }
         };
         /**
          * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
