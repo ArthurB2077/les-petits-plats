@@ -107,6 +107,17 @@ fetch('./../../api/data/recipe.json')
     })
     .then(recipes => {
         /**
+         * This function check the size of each description paragraph and if it's exceed a maximum length add a style
+         * to notify that is hidden
+         */
+        const overFlowDescription = () => {
+            Array.from(document.getElementsByClassName('recipe-instructions')).forEach((p, index) => {
+                if (p.textContent.length > 380) {
+                    p.style.position = 'relative';
+                }
+            })
+        };
+        /**
          * This instance allow to create all the recipes from the retrieved json. After that, the following methods
          * allow to create a container for recipes and the recipes themself.
          * @type {Recipes}
@@ -114,6 +125,7 @@ fetch('./../../api/data/recipe.json')
         const recipesToRender = new Recipes(recipes);
         recipesToRender.renderRecipeContainer();
         recipesToRender.renderRecipes();
+        overFlowDescription();
         /**
          * Global variable that will hold the state of display recipes.
          * @type {Array}

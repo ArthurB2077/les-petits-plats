@@ -79,8 +79,8 @@ body header h1 {
 }
 #recipes .recipe {
   display: flex;
-  height: 450px;
-  max-width: 450px;
+  height: 480px;
+  max-width: 480px;
   border-radius: 5px;
   z-index: 0;
 }
@@ -147,9 +147,20 @@ body header h1 {
 }
 #recipes .recipe .recipe-description .recipe-method .recipe-instructions {
   font-size: 12px !important;
-  max-height: border-box;
-  display: inline-block;
   overflow: hidden;
+  line-height: 14px;
+  max-height: calc(14px* 10);
+  text-align: justify;
+  padding-right: 10px;
+  margin: 0 auto;
+  text-overflow: ellipsis;
+}
+#recipes .recipe .recipe-description .recipe-method .recipe-instructions::after {
+  content: "...";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-left: 3px;
   text-overflow: ellipsis;
 }
 @media all and (min-width: 200px) and (max-width: 400px) {
