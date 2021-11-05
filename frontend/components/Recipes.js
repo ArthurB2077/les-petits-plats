@@ -174,7 +174,7 @@ fetch('./../../api/data/recipe.json')
                     document.getElementById('recipes').appendChild(factory.createDOMElement('p', { id: 'recipe-not-found', class: 'text-center' }, '« Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson », etc.'));
                 }
             } else {
-                if (!document.getElementById('recipe-not-found')) {
+                if (document.getElementById('recipe-not-found') !== null) {
                     document.getElementById('recipe-not-found').remove();
                 }
             }
