@@ -28,7 +28,7 @@ fetch('./../../api/data/recipe.json')
          * to notify that is hidden
          */
         const overFlowDescription = () => {
-            Array.from(document.getElementsByClassName('recipe-instructions')).forEach((p, index) => {
+            Array.from(document.getElementsByClassName('recipe-instructions')).forEach((p) => {
                 if (p.textContent.length > 380) {
                     p.style.position = 'relative';
                 }
@@ -96,6 +96,7 @@ fetch('./../../api/data/recipe.json')
                 }
             }
         };
+
         /**
          * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
          * filter list
@@ -189,6 +190,7 @@ fetch('./../../api/data/recipe.json')
                 });
             }
         };
+
         /**
          * This function hide all recipes and, after that, display only those it had receive in input
          * @param recipesToDisplay => Array of recipes to be display
@@ -218,6 +220,7 @@ fetch('./../../api/data/recipe.json')
                 document.getElementById(`${recipeToFilter.id}`).style.display = 'none';
             }
         };
+
         /**
          * This function listen all the dropdown list items. If a item is clicked, it's building the tag and add it's
          * value to the global variable of corresponding selected tags array. It also withdraw the item from the list,
@@ -313,6 +316,7 @@ fetch('./../../api/data/recipe.json')
             }
             updateFiltersChildrenByTags(recipeDisplayed);
         };
+
         /**
          * On load give the focus to the main search bar
          */
