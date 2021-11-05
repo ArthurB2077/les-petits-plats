@@ -327,7 +327,7 @@ fetch('./../../api/data/recipe.json')
                     }
                     event.target.style.display = 'none';
                     document.getElementById(`${tagType}-input`).value = '';
-                    recipes.forEach(recipe => {
+                    recipeDisplayed.forEach(recipe => {
                         displayRecipesBySelectedTags(recipe);
                     });
                     switch (event.target.getAttribute('data-group-name')) {
