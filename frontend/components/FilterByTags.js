@@ -1,8 +1,7 @@
 import DOMElementFactory from "../scripts/factory/domElementFactory.js";
 
 const factory = new DOMElementFactory();
-const filtersSection = factory.createDOMElement('section', { id: 'dropdown-filters', class: 'mb-4', 'aria-label': 'Section filtres' }, factory.createDOMElement('div', { id: 'tags', class: 'mb-3', 'aria-label': 'Section tags' }));
-document.getElementById('root').appendChild(filtersSection);
+
 const filterProperties = [
     { id: 'ingredients', title: 'Ingrédient', 'bg-color': 'bg-primary', 'btn-color': 'btn-primary', toggle: 'toggle-ing' },
     { id: 'devices', title: 'Appareil', 'bg-color': 'bg-success', 'btn-color': 'btn-success', toggle: 'toggle-dev' },
@@ -107,10 +106,5 @@ class FilterByTags {
 
     }
 }
-
-export const filters = new FilterByTags();
-
-filters.renderFilters;
-filters.handleRollingDropdown;
 
 export default FilterByTags;
