@@ -247,9 +247,15 @@ fetch('./../../api/data/recipe.json')
                     }
                     event.target.style.display = 'none';
                     document.getElementById(`${tagType}-input`).value = '';
-                    recipeDisplayed.forEach(recipe => {
-                        displayRecipesBySelectedTags(recipe);
-                    });
+                    if (document.getElementById("searchbar-input").value.length === 0) {
+                        recipes.forEach(recipe => {
+                            displayRecipesBySelectedTags(recipe);
+                        });
+                    } else {
+                        recipeDisplayed.forEach(recipe => {
+                            displayRecipesBySelectedTags(recipe);
+                        });
+                    }
                     switch (event.target.getAttribute('data-group-name')) {
                         case 'selectedIngredientsArray': {
                             if (selectedIngredientsArray.length !== 0) {
