@@ -169,75 +169,71 @@ class Recipes {
      * This function listen all the dropdown list items. If a item is clicked, it's building the tag and add it's
      * value to the global variable of corresponding selected tags array. It also withdraw the item from the list,
      * filter the recipes and refresh the dropdown list depending on the new selected tag.
+     * @param eventTarget => Tag element which receive the click to be display
      * @param tagType => Ingredients, devices or utensils
      * @param recipes => Array of the recipes from the fetch retrieved
      * @param recipeDisplayed => Array of recipes displayed in the dom
      */
-    displayTag(tagType, recipes, recipeDisplayed) {
-        const tagItemsDisplayed = Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagType}`)).filter(item => item.getAttribute('style') === 'display: flex;');
-        tagItemsDisplayed.forEach(tagItem => {
-            tagItem.addEventListener('click', (event) => {
-                this.instanceOfFilters.tagsBuilder(event.target.textContent, tagType);
-                switch (event.target.getAttribute('data-group-name')) {
-                    case 'selectedIngredientsArray':
-                        this.selectedIngredientsArray.push(event.target.textContent);
-                        break;
-                    case 'selectedUtensilsArray':
-                        this.selectedUtensilsArray.push(event.target.textContent);
-                        break;
-                    case 'selectedApplianceArray':
-                        this.selectedApplianceArray.push(event.target.textContent);
-                        break;
-                    default:
-                        break;
-                }
-                event.target.style.display = 'none';
-                document.getElementById(`${tagType}-input`).value = '';
-                if (document.getElementById("searchbar-input").value.length === 0) {
-                    recipes.forEach(recipe => {
-                        this.displayRecipesBySelectedTags(recipe);
-                    });
-                } else {
-                    recipeDisplayed.forEach(recipe => {
-                        this.displayRecipesBySelectedTags(recipe);
-                    });
-                }
-                switch (event.target.getAttribute('data-group-name')) {
-                    case 'selectedIngredientsArray': {
-                        if (this.selectedIngredientsArray.length !== 0) {
-                            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                            const filterCriteria = domRecipes.map(item => item.id);
-                            this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                        } else {
-                            this.instanceOfFilters.updateFiltersChildren(recipes);
-                        }
-                        break;
-                    }
-                    case 'selectedUtensilsArray': {
-                        if (this.selectedUtensilsArray.length !== 0) {
-                            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                            const filterCriteria = domRecipes.map(item => item.id);
-                            this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                        } else {
-                            this.instanceOfFilters.updateFiltersChildren(recipes);
-                        }
-                        break;
-                    }
-                    case 'selectedApplianceArray': {
-                        if (this.selectedApplianceArray.length !== 0) {
-                            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                            const filterCriteria = domRecipes.map(item => item.id);
-                            this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                        } else {
-                            this.instanceOfFilters.updateFiltersChildren(recipes);
-                        }
-                        break;
-                    }
-                    default:
-                        break;
-                }
+    displayTag(eventTarget, tagType, recipes, recipeDisplayed) {
+        this.instanceOfFilters.tagsBuilder(eventTarget.textContent, tagType);
+        switch (eventTarget.getAttribute('data-group-name')) {
+            case 'selectedIngredientsArray':
+                this.selectedIngredientsArray.push(eventTarget.textContent);
+                break;
+            case 'selectedUtensilsArray':
+                this.selectedUtensilsArray.push(eventTarget.textContent);
+                break;
+            case 'selectedApplianceArray':
+                this.selectedApplianceArray.push(eventTarget.textContent);
+                break;
+            default:
+                break;
+        }
+        eventTarget.style.display = 'none';
+        document.getElementById(`${tagType}-input`).value = '';
+        if (document.getElementById("searchbar-input").value.length === 0) {
+            recipes.forEach(recipe => {
+                this.displayRecipesBySelectedTags(recipe);
             });
-        });
+        } else {
+            recipeDisplayed.forEach(recipe => {
+                this.displayRecipesBySelectedTags(recipe);
+            });
+        }
+        switch (eventTarget.getAttribute('data-group-name')) {
+            case 'selectedIngredientsArray': {
+                if (this.selectedIngredientsArray.length !== 0) {
+                    const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                    const filterCriteria = domRecipes.map(item => item.id);
+                    this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                } else {
+                    this.instanceOfFilters.updateFiltersChildren(recipes);
+                }
+                break;
+            }
+            case 'selectedUtensilsArray': {
+                if (this.selectedUtensilsArray.length !== 0) {
+                    const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                    const filterCriteria = domRecipes.map(item => item.id);
+                    this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                } else {
+                    this.instanceOfFilters.updateFiltersChildren(recipes);
+                }
+                break;
+            }
+            case 'selectedApplianceArray': {
+                if (this.selectedApplianceArray.length !== 0) {
+                    const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+                    const filterCriteria = domRecipes.map(item => item.id);
+                    this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+                } else {
+                    this.instanceOfFilters.updateFiltersChildren(recipes);
+                }
+                break;
+            }
+            default:
+                break;
+        }
     }
 
     /**
