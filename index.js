@@ -15,7 +15,7 @@ const search = new Search('root');
 search.renderSearch();
 
 const filters = new Filters();
-const filtersSection = factory.createDOMElement('section', { id: 'dropdown-filters', class: 'mb-4', 'aria-label': 'Section filtres' }, factory.createDOMElement('div', { id: 'tags', class: 'mb-3', 'aria-label': 'Section tags' }));
+const filtersSection = factory.createDOMElement('section', { id: 'dropdown-filters', class: 'mb-4', 'aria-label': 'Section filtres' }, factory.createDOMElement('div', { id: 'tags', class: 'mb-3' }));
 document.getElementById('root').appendChild(filtersSection);
 filters.filtersBuilder();
 filters.handleDropdownStyle();

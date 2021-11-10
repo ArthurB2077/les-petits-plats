@@ -65,8 +65,8 @@ class Filters {
             dropdownListContainer.appendChild(dropdownList)
 
             const buttonTitle = factory.createDOMElement('input', { id: `${filter.id}-input`, class: 'dropdown-button__input', placeholder: `${filter.title}`, disabled: '', 'data-name': `${filter.id}` });
-            const buttonSpinner = factory.createDOMElement('svg', { id: `${filter.toggle}`, class: 'dropdown-spinner', 'data-toggle': 'rolled', width:'20px', height: '20px', padding: '10px', viewBox: '0 0 16 11', fill: 'none', xmlns: 'http://www.w3.org/2000/svg' }, factory.createDOMElement('path', { d: 'M14.12 0.453369L8 6.56004L1.88 0.453369L0 2.33337L8 10.3334L16 2.33337L14.12 0.453369Z', fill: 'white' }));
-            const dropdownButton = factory.createDOMElement('button', { type: 'button', class: `dropdown-button btn ${filter['btn-color']} btn-lg pt-3 pb-3`, 'aria-expanded': 'false' }, buttonTitle, buttonSpinner);
+            const buttonSpinner = factory.createDOMElement('svg', { id: `${filter.toggle}`, class: 'dropdown-spinner', 'data-toggle': 'rolled', width:'20px', height: '20px', viewBox: '0 0 16 11', fill: 'none', xmlns: 'http://www.w3.org/2000/svg' }, factory.createDOMElement('path', { d: 'M14.12 0.453369L8 6.56004L1.88 0.453369L0 2.33337L8 10.3334L16 2.33337L14.12 0.453369Z', fill: 'white' }));
+            const dropdownButton = factory.createDOMElement('div', { role:'listbox', class: `dropdown-button btn ${filter['btn-color']} btn-lg pt-3 pb-3`, 'aria-expanded': 'false' }, buttonTitle, buttonSpinner);
             dropDownButtonContainer.appendChild(factory.createDOMElement('div', { id: `${filter.title.toLowerCase()}-group`, class: 'dropdown-btn-group me-3' }, dropdownButton, dropdownListContainer));
         })
 
@@ -130,7 +130,7 @@ class Filters {
     createFilterChildren(noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) {
         noDuplicateFilters.forEach((tag) => {
             if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
-                filter.appendChild(factory.createDOMElement('a', { class: `filter-item dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}`, "data-name": `${filterType}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
+                filter.appendChild(factory.createDOMElement('a', { class: `filter-item dropdown-filter-item__${filterType} text-white`, role: 'option', href: '#', 'data-group-name': `${selectedTagsArrayName}`, "data-name": `${filterType}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
             }
         });
     }
