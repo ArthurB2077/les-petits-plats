@@ -3,7 +3,7 @@ import Header from "./frontend/components/Header.js";
 import Search from "./frontend/components/Search.js";
 import Filters from "./frontend/components/Filters.js";
 import Recipes from "./frontend/components/Recipes.js";
-import {findInput} from "./frontend/scripts/algorithms/functionalAlgoRecursive.js";
+import {findInput} from "./frontend/scripts/algorithms/objectOrientedAlgoRecursive.js";
 import {giveFocusOnOver, isNoResultsForSearch} from "./frontend/scripts/utils/utils.js";
 
 const factory = new DOMElementFactory();
