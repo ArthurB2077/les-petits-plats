@@ -1,6 +1,6 @@
 import DOMElementFactory from "../scripts/factory/domElementFactory.js";
 import { isArrayIncludesInAnotherArray } from "../scripts/utils/utils.js";
-import { findInput } from "../scripts/algorithms/functionalAlgoRecursive.js";
+import { findInput } from "../scripts/algorithms/objectOrientedAlgoRecursive.js";
 
 const factory = new DOMElementFactory();
 
