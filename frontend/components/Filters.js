@@ -130,7 +130,7 @@ class Filters {
     createFilterChildren(noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) {
         noDuplicateFilters.forEach((tag) => {
             if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
-                filter.appendChild(factory.createDOMElement('a', { class: `dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
+                filter.appendChild(factory.createDOMElement('a', { class: `filter-item dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}`, "data-name": `${filterType}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
             }
         });
     }
