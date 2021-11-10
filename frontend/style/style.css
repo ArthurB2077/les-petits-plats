@@ -86,7 +86,7 @@ body header h1 {
 }
 @media all and (min-width: 1311px) and (max-width: 1690px) {
   #recipes .recipe {
-    height: 400px;
+    height: 475px;
   }
 }
 @media all and (min-width: 300px) and (max-width: 1310px) {
@@ -154,6 +154,9 @@ body header h1 {
   padding-right: 10px;
   margin: 0 auto;
   text-overflow: ellipsis;
+}
+#recipes .recipe .recipe-description .recipe-method .recipe-instructions__overflow {
+  position: relative;
 }
 #recipes .recipe .recipe-description .recipe-method .recipe-instructions::after {
   content: "...";

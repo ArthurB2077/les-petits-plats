@@ -18,14 +18,11 @@ class FilterByTags {
         };
     }
 
-    get renderFilters() {
-        this.filtersBuilder();
-    }
-
-    get handleRollingDropdown() {
-        this.changeDropdownStyle();
-    }
-
+    /**
+     * Build a tags depending of his name and his group.
+     * @param tagName => Content of the tag
+     * @param tagGroup => Group of the tag among utensils, ingredients and devices
+     */
     tagsBuilder(tagName, tagGroup) {
         const selectedTags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
 
@@ -56,6 +53,9 @@ class FilterByTags {
         }
     }
 
+    /**
+     * Build filters components
+     */
     filtersBuilder() {
         const dropDownButtonContainer = factory.createDOMElement('div', { class: 'btn-group-container' });
 
@@ -75,7 +75,10 @@ class FilterByTags {
         )
     }
 
-    changeDropdownStyle() {
+    /**
+     * This function handle the folding/unfolding of the dropdown filter component.
+     */
+    handleDropdownStyle() {
         filterProperties.forEach(filter => {
             document.getElementById(`${filter.toggle}`).addEventListener('click', (event) => {
                 event.stopPropagation();

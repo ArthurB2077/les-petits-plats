@@ -3,20 +3,6 @@ import DOMElementFactory from "../factory/domElementFactory.js";
 const factory = new DOMElementFactory();
 
 /**
- * This function check the size of each description paragraph and if it's exceed a maximum length add a style
- * to notify that is hidden
- */
-
-export const overFlowDescription = () => {
-    Array.from(document.getElementsByClassName('recipe-instructions')).forEach((p) => {
-        if (p.textContent.length > 380) {
-            p.style.position = 'relative';
-        }
-    })
-};
-
-
-/**
  * This function take two array in input and check if the elements of the first array are include in the
  * second array and return if it's true or false. If the first array is empty return true. Why that ? Because
  * we want to display recipes that contains filter in the first and second and third array. So, if the first

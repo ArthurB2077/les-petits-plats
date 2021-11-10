@@ -3,10 +3,6 @@ import DOMElementFactory from "../scripts/factory/domElementFactory.js";
 const factory = new DOMElementFactory();
 
 class Header {
-    get header() {
-        return this.renderHeader();
-    }
-
     renderHeader() {
         /**
          * Page logo

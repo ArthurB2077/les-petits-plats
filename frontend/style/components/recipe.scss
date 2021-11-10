@@ -33,7 +33,7 @@
     border-radius: 5px;
     z-index: 0;
     @media all and (min-width: 1311px) and (max-width: 1690px) {
-      height: 400px;
+      height: 475px;
     }
     @media all and (min-width: 300px) and (max-width: 1310px) {
       width: 100%;
@@ -92,7 +92,9 @@
           padding-right: 10px;
           margin: 0 auto;
           text-overflow: ellipsis;
-          //position: relative;
+          &__overflow {
+            position: relative;
+          }
           &::after {
             content: '...';
             position: absolute;

@@ -8,15 +8,15 @@ class Recipes {
     constructor(recipes, instanceOfFilters, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray) {
         this.recipes = recipes;
         this.instanceOfFilters = instanceOfFilters;
+        /**
+         * This 3 global variables will hold the state of selected tags per family (ingredients, devices, utensils).
+         * @type {Array, Array, Array}
+         */
         this.selectedIngredientsArray = selectedIngredientsArray;
         this.selectedUtensilsArray = selectedUtensilsArray;
         this.selectedApplianceArray = selectedApplianceArray;
     }
 
-    /**
-     * This 3 global variables will hold the state of selected tags per family (ingredients, devices, utensils).
-     * @type {Array, Array, Array}
-     */
     get selectedIngredientsArrayLength() {
         return this.selectedIngredientsArray.length;
     }
@@ -27,10 +27,6 @@ class Recipes {
 
     get selectedApplianceArrayLength() {
         return this.selectedApplianceArray.length;
-    }
-
-    get renderRecipes() {
-        return this.recipesBuilder;
     }
 
     recipesBuilder() {
@@ -61,7 +57,13 @@ class Recipes {
             /**
              * Preparation instructions in recipes
              */
-            const instructions = factory.createDOMElement('p', { class: 'recipe-instructions w-50' }, recipe.description);
+            let instructions;
+            if (recipe.description > 380) {
+                instructions = factory.createDOMElement('p', { class: 'recipe-instructions recipe-instructions__overflow w-50' }, recipe.description);
+            } else {
+                instructions = factory.createDOMElement('p', { class: 'recipe-instructions w-50' }, recipe.description);
+            }
+
             /**
              * Container for preparation instructions and list of ingredients in recipes
              */
@@ -112,10 +114,6 @@ class Recipes {
         })
     }
 
-    get renderRecipeContainer() {
-        return this.recipeContainerBuilder;
-    }
-
     recipeContainerBuilder() {
         const recipesSection = factory.createDOMElement('section', { id: 'recipes', 'aria-label': 'Section recettes' });
         document.getElementById('root').appendChild(recipesSection);
@@ -143,7 +141,7 @@ class Recipes {
     displayRecipes(recipesToDisplay) {
         Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none');
         recipesToDisplay.forEach(recipe => document.getElementById(`${recipe.id}`).style.display = 'flex');
-    };
+    }
 
     /**
      * This function filters recipes by selected tags. If the recipes have properties that matching the selected
@@ -165,7 +163,7 @@ class Recipes {
         } else {
             document.getElementById(`${recipeToFilter.id}`).style.display = 'none';
         }
-    };
+    }
 
     /**
      * This function listen all the dropdown list items. If a item is clicked, it's building the tag and add it's
@@ -240,7 +238,7 @@ class Recipes {
                 }
             });
         });
-    };
+    }
 
     /**
      * This function remove tag by withdraw it from the corresponding selected tags array, refresh filtered recipes
@@ -307,7 +305,7 @@ class Recipes {
             })
         }
         this.updateFiltersChildrenByTags(recipeDisplayed);
-    };
+    }
 }
 
 export default Recipes;
