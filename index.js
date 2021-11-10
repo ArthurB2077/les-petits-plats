@@ -27,6 +27,7 @@ filters.handleDropdownStyle();
      * @type {Recipes}
      */
     const recipes = new Recipes(retrievedRecipes, filters, [], [], []);
+
     recipes.recipeContainerBuilder();
     recipes.recipesBuilder();
 
@@ -40,12 +41,14 @@ filters.handleDropdownStyle();
      * On load give the focus to the main search bar
      */
     document.getElementById('searchbar-input').focus();
+
     /**
      * When the main searchbar lost focus, this event give it to the first open searchbar filter open
      */
     document.getElementById('searchbar-input').addEventListener('blur', () => {
         giveFocusOnOver();
     });
+
     /**
      * Event listener that filter the displayed recipes depending on the user input value. It has a condition to
      * handle the case where a new search is initialise and a tag or more are already selected
@@ -73,26 +76,40 @@ filters.handleDropdownStyle();
         }
     });
     /**
+     * This function display a tag when the user click on an element in the dropdown listed tag name. This list items
+     * are add and suppressed depending on the user input. In that case, a simple addeventlistner like for a static
+     * element would not fire. In order to accomplish that, a mouseover event listen the parent container and if there
+     * is listed items in in, it add a on click event listener which will fire in any case and display the tag
+     */
+    document.getElementById('ingrédient-group').addEventListener('mouseover', (event) => {
+        if (event.target.tagName === 'A') {
+            Array.from(document.getElementsByClassName('filter-item')).forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopImmediatePropagation();
+                    recipes.displayTag(e.target, e.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
+                })
+            })
+        }
+    })
+
+    /**
      * Handle each type of events that the filters input can receive. Depending of the event types, it's updating
      * the content of the dropdown list depending on the input value, display a tag if one dropdown list item is
      * clicked and update them if a tag is selected
      */
-
     for (let filter of  Array.from(document.getElementsByClassName('dropdown-button__input'))) {
         filter.addEventListener('input', (event) => {
             filters.updateFilterChildrenByInputValue(event.target);
-        });
-        filter.addEventListener('change', (event) => {
-            recipes.displayTag(event.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
         });
         filter.addEventListener('focus', (event) => {
             if (document.getElementById('searchbar-input').value.length < 3) {
                 recipes.updateFiltersChildrenByTags(retrievedRecipes);
             }
             filters.updateFilterChildrenByInputValue(event.target);
-            recipes.displayTag(event.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
         });
+
     }
+
     /**
      * Handle the close of a tag and call the appropriate functions for remove it
      */
@@ -130,4 +147,5 @@ filters.handleDropdownStyle();
             });
         }
     });
+
 }).catch((error) => console.log(error))
