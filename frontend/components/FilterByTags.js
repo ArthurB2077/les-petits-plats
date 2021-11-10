@@ -165,24 +165,6 @@ class FilterByTags {
     };
 
     /**
-     * This function handle the refresh of the tags items in the dropdown list depending of the tags selected
-     * and the recipes
-     * @param recipesArray => Array of display recipes which allow dropdown list children to be filtered
-     * @param selectedIngredientsArray => List of the selected ingredients
-     * @param selectedUtensilsArray => List of the selected utensils
-     * @param selectedApplianceArray => List of the selected devices
-     */
-    updateFiltersChildrenByTags(recipesArray, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray) {
-        if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-            const filterCriteria = domRecipes.map(item => item.id);
-            this.updateFiltersChildren(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-        } else {
-            this.updateFiltersChildren(recipesArray);
-        }
-    }
-
-    /**
      * This function handle the refresh of the tags items in the dropdown list depending on what the user is typing
      * in the filter input (ingredients, devices, utensils)
      * @param element

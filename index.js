@@ -29,7 +29,7 @@ fetch('./../../api/data/recipe.json')
          * allow to create a container for recipes and the recipes themself.
          * @type {Recipes}
          */
-        const recipesToRender = new Recipes(recipes, filters);
+        const recipesToRender = new Recipes(recipes, filters, [], [], []);
         recipesToRender.renderRecipeContainer();
         recipesToRender.renderRecipes();
         overFlowDescription();
@@ -39,13 +39,6 @@ fetch('./../../api/data/recipe.json')
          * @type {Array}
          */
         let recipeDisplayed = recipes;
-        /**
-         * This 3 global variables will hold the state of selected tags per family (ingredients, devices, utensils).
-         * @type {Array, Array, Array}
-         */
-        const selectedIngredientsArray = [];
-        const selectedUtensilsArray = [];
-        const selectedApplianceArray = [];
 
         /**
          * On load give the focus to the main search bar
@@ -65,17 +58,17 @@ fetch('./../../api/data/recipe.json')
             if (event.target.value.length > 2) {
                 recipeDisplayed = findInput(`${event.target.value}`, recipes);
                 recipesToRender.displayRecipes(recipeDisplayed);
-                if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-                    recipeDisplayed.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray));
+                if (recipesToRender.selectedIngredientsArrayLength !== 0 || recipesToRender.selectedUtensilsArrayLength !== 0 ||recipesToRender.selectedApplianceArrayLength !== 0) {
+                    recipeDisplayed.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe));
                 }
-                filters.updateFiltersChildrenByTags(recipeDisplayed, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                recipesToRender.updateFiltersChildrenByTags(recipeDisplayed);
                 isNoResultsForSearch();
             } else {
                 recipesToRender.displayRecipes(recipes);
-                if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-                    recipes.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray));
+                if (recipesToRender.selectedIngredientsArrayLength !== 0 || recipesToRender.selectedUtensilsArrayLength !== 0 ||recipesToRender.selectedApplianceArrayLength !== 0) {
+                    recipes.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe));
                 }
-                filters.updateFiltersChildrenByTags(recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                recipesToRender.updateFiltersChildrenByTags(recipes);
                 isNoResultsForSearch();
             }
         });
@@ -89,14 +82,14 @@ fetch('./../../api/data/recipe.json')
                 filters.updateFilterChildrenByInputValue(event.target);
             });
             filter.addEventListener('change', (event) => {
-                recipesToRender.displayTag(event.target.getAttribute('data-name'), recipes, recipeDisplayed, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                recipesToRender.displayTag(event.target.getAttribute('data-name'), recipes, recipeDisplayed);
             });
             filter.addEventListener('focus', (event) => {
                 if (document.getElementById('searchbar-input').value.length < 3) {
-                    filters.updateFiltersChildrenByTags(recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                    recipesToRender.updateFiltersChildrenByTags(recipes);
                 }
                 filters.updateFilterChildrenByInputValue(event.target);
-                recipesToRender.displayTag(event.target.getAttribute('data-name'), recipes, recipeDisplayed, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                recipesToRender.displayTag(event.target.getAttribute('data-name'), recipes, recipeDisplayed);
             });
         });
         /**
@@ -112,15 +105,15 @@ fetch('./../../api/data/recipe.json')
                     tagToClose.remove();
                     switch (tagGroup) {
                         case 'ingredients': {
-                            recipesToRender.removeTag(selectedIngredientsArray, event.target, tagItemsNotDisplayed, recipeDisplayed, recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                            recipesToRender.removeTag('ingredients', event.target, tagItemsNotDisplayed, recipeDisplayed, recipes);
                             break;
                         }
                         case 'devices': {
-                            recipesToRender.removeTag(selectedApplianceArray, event.target, tagItemsNotDisplayed, recipeDisplayed, recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                            recipesToRender.removeTag('devices', event.target, tagItemsNotDisplayed, recipeDisplayed, recipes);
                             break;
                         }
                         case 'utensils': {
-                            recipesToRender.removeTag(selectedUtensilsArray, event.target, tagItemsNotDisplayed, recipeDisplayed, recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
+                            recipesToRender.removeTag('utensils', event.target, tagItemsNotDisplayed, recipeDisplayed, recipes);
                             break;
                         }
                         default:
