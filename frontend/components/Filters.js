@@ -8,7 +8,7 @@ const filterProperties = [
     { id: 'utensils', title: 'Ustensile', 'bg-color': 'bg-danger', 'btn-color': 'btn-danger', toggle: 'toggle-lis' }
 ];
 
-class FilterByTags {
+class Filters {
     constructor() {
         this.domInsertTags = (contentToInsert) => {
             document.getElementById('tags').appendChild(contentToInsert);
@@ -193,4 +193,4 @@ class FilterByTags {
     };
 }
 
-export default FilterByTags;
+export default Filters;

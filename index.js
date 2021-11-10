@@ -1,10 +1,12 @@
 import DOMElementFactory from "./frontend/scripts/factory/domElementFactory.js";
 import Header from "./frontend/components/Header.js";
 import Search from "./frontend/components/Search.js";
-import FilterByTags from "./frontend/components/FilterByTags.js";
+import Filters from "./frontend/components/Filters.js";
 import Recipes from "./frontend/components/Recipes.js";
 import {findInput} from "./frontend/scripts/algorithms/functionalAlgoRecursive.js";
 import {giveFocusOnOver, isNoResultsForSearch} from "./frontend/scripts/utils/utils.js";
+
+const factory = new DOMElementFactory();
 
 const header = new Header();
 header.renderHeader();
@@ -12,8 +14,7 @@ header.renderHeader();
 const search = new Search('root');
 search.renderSearch();
 
-const filters = new FilterByTags();
-const factory = new DOMElementFactory();
+const filters = new Filters();
 const filtersSection = factory.createDOMElement('section', { id: 'dropdown-filters', class: 'mb-4', 'aria-label': 'Section filtres' }, factory.createDOMElement('div', { id: 'tags', class: 'mb-3', 'aria-label': 'Section tags' }));
 document.getElementById('root').appendChild(filtersSection);
 filters.filtersBuilder();
@@ -25,9 +26,9 @@ filters.handleDropdownStyle();
      * allow to create a container for recipes and the recipes themself.
      * @type {Recipes}
      */
-    const recipesToRender = new Recipes(retrievedRecipes, filters, [], [], []);
-    recipesToRender.recipeContainerBuilder();
-    recipesToRender.recipesBuilder();
+    const recipes = new Recipes(retrievedRecipes, filters, [], [], []);
+    recipes.recipeContainerBuilder();
+    recipes.recipesBuilder();
 
     /**
      * Global variable that will hold the state of display recipes.
@@ -52,18 +53,18 @@ filters.handleDropdownStyle();
     document.getElementById('searchbar-input').addEventListener('input', (event) => {
         if (event.target.value.length > 2) {
             recipeDisplayed = findInput(`${event.target.value}`, retrievedRecipes);
-            recipesToRender.displayRecipes(recipeDisplayed);
-            if (recipesToRender.selectedIngredientsArrayLength !== 0 || recipesToRender.selectedUtensilsArrayLength !== 0 ||recipesToRender.selectedApplianceArrayLength !== 0) {
-                recipeDisplayed.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe));
+            recipes.displayRecipes(recipeDisplayed);
+            if (recipes.selectedIngredientsArrayLength !== 0 || recipes.selectedUtensilsArrayLength !== 0 ||recipes.selectedApplianceArrayLength !== 0) {
+                recipeDisplayed.forEach(recipe => recipes.displayRecipesBySelectedTags(recipe));
             }
-            recipesToRender.updateFiltersChildrenByTags(recipeDisplayed);
+            recipes.updateFiltersChildrenByTags(recipeDisplayed);
             isNoResultsForSearch();
         } else {
-            recipesToRender.displayRecipes(retrievedRecipes);
-            if (recipesToRender.selectedIngredientsArrayLength !== 0 || recipesToRender.selectedUtensilsArrayLength !== 0 ||recipesToRender.selectedApplianceArrayLength !== 0) {
-                retrievedRecipes.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe));
+            recipes.displayRecipes(retrievedRecipes);
+            if (recipes.selectedIngredientsArrayLength !== 0 || recipes.selectedUtensilsArrayLength !== 0 ||recipes.selectedApplianceArrayLength !== 0) {
+                retrievedRecipes.forEach(recipe => recipes.displayRecipesBySelectedTags(recipe));
             }
-            recipesToRender.updateFiltersChildrenByTags(retrievedRecipes);
+            recipes.updateFiltersChildrenByTags(retrievedRecipes);
             isNoResultsForSearch();
         }
     });
@@ -77,14 +78,14 @@ filters.handleDropdownStyle();
             filters.updateFilterChildrenByInputValue(event.target);
         });
         filter.addEventListener('change', (event) => {
-            recipesToRender.displayTag(event.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
+            recipes.displayTag(event.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
         });
         filter.addEventListener('focus', (event) => {
             if (document.getElementById('searchbar-input').value.length < 3) {
-                recipesToRender.updateFiltersChildrenByTags(retrievedRecipes);
+                recipes.updateFiltersChildrenByTags(retrievedRecipes);
             }
             filters.updateFilterChildrenByInputValue(event.target);
-            recipesToRender.displayTag(event.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
+            recipes.displayTag(event.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
         });
     });
     /**
@@ -100,15 +101,15 @@ filters.handleDropdownStyle();
                 tagToClose.remove();
                 switch (tagGroup) {
                     case 'ingredients': {
-                        recipesToRender.removeTag('ingredients', event.target, tagItemsNotDisplayed, recipeDisplayed, retrievedRecipes);
+                        recipes.removeTag('ingredients', event.target, tagItemsNotDisplayed, recipeDisplayed, retrievedRecipes);
                         break;
                     }
                     case 'devices': {
-                        recipesToRender.removeTag('devices', event.target, tagItemsNotDisplayed, recipeDisplayed, retrievedRecipes);
+                        recipes.removeTag('devices', event.target, tagItemsNotDisplayed, recipeDisplayed, retrievedRecipes);
                         break;
                     }
                     case 'utensils': {
-                        recipesToRender.removeTag('utensils', event.target, tagItemsNotDisplayed, recipeDisplayed, retrievedRecipes);
+                        recipes.removeTag('utensils', event.target, tagItemsNotDisplayed, recipeDisplayed, retrievedRecipes);
                         break;
                     }
                     default:

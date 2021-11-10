@@ -17,18 +17,30 @@ class Recipes {
         this.selectedApplianceArray = selectedApplianceArray;
     }
 
+    /**
+     * @returns {number} => Length of the ingredients selected tag array
+     */
     get selectedIngredientsArrayLength() {
         return this.selectedIngredientsArray.length;
     }
 
+    /**
+     * @returns {number} => Length of the utensils selected tag array
+     */
     get selectedUtensilsArrayLength() {
         return this.selectedUtensilsArray.length;
     }
 
+    /**
+     * @returns {number} => Length of the devices selected tag array
+     */
     get selectedApplianceArrayLength() {
         return this.selectedApplianceArray.length;
     }
 
+    /**
+     * Build each recipes in the DOM with the associated style
+     */
     recipesBuilder() {
         this.recipes.forEach(recipe => {
             /**
@@ -58,7 +70,7 @@ class Recipes {
              * Preparation instructions in recipes
              */
             let instructions;
-            if (recipe.description > 380) {
+            if (recipe.description.length > 380) {
                 instructions = factory.createDOMElement('p', { class: 'recipe-instructions recipe-instructions__overflow w-50' }, recipe.description);
             } else {
                 instructions = factory.createDOMElement('p', { class: 'recipe-instructions w-50' }, recipe.description);
@@ -114,24 +126,12 @@ class Recipes {
         })
     }
 
+    /**
+     * Build a dom element container for the recipes in the DOM
+     */
     recipeContainerBuilder() {
         const recipesSection = factory.createDOMElement('section', { id: 'recipes', 'aria-label': 'Section recettes' });
         document.getElementById('root').appendChild(recipesSection);
-    }
-
-    /**
-     * This function handle the refresh of the tags items in the dropdown list depending of the tags selected
-     * and the recipes
-     * @param recipesArray => Array of display recipes which allow dropdown list children to be filtered
-     */
-    updateFiltersChildrenByTags(recipesArray) {
-        if (this.selectedIngredientsArray.length !== 0 || this.selectedUtensilsArray.length !== 0 || this.selectedApplianceArray.length !== 0) {
-            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-            const filterCriteria = domRecipes.map(item => item.id);
-            this.instanceOfFilters.updateFiltersChildren(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-        } else {
-            this.instanceOfFilters.updateFiltersChildren(recipesArray);
-        }
     }
 
     /**
@@ -305,6 +305,21 @@ class Recipes {
             })
         }
         this.updateFiltersChildrenByTags(recipeDisplayed);
+    }
+
+    /**
+     * This function handle the refresh of the tags items in the dropdown list depending of the tags selected
+     * and the recipes
+     * @param recipesArray => Array of display recipes which allow dropdown list children to be filtered
+     */
+    updateFiltersChildrenByTags(recipesArray) {
+        if (this.selectedIngredientsArray.length !== 0 || this.selectedUtensilsArray.length !== 0 || this.selectedApplianceArray.length !== 0) {
+            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+            const filterCriteria = domRecipes.map(item => item.id);
+            this.instanceOfFilters.updateFiltersChildren(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+        } else {
+            this.instanceOfFilters.updateFiltersChildren(recipesArray);
+        }
     }
 }
 
