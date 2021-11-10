@@ -4,6 +4,7 @@ import Search from "./frontend/components/Search.js";
 import FilterByTags from "./frontend/components/FilterByTags.js";
 import Recipes from "./frontend/components/Recipes.js";
 import { findInput } from "./frontend/scripts/algorithms/functionalAlgoRecursive.js";
+import { overFlowDescription, isArrayIncludesInAnotherArray, giveFocusOnOver, isNoResultsForSearch } from "./frontend/scripts/utils/utils.js";
 
 const header = new Header();
 header.header;
@@ -24,17 +25,6 @@ fetch('./../../api/data/recipe.json')
     })
     .then(recipes => {
         /**
-         * This function check the size of each description paragraph and if it's exceed a maximum length add a style
-         * to notify that is hidden
-         */
-        const overFlowDescription = () => {
-            Array.from(document.getElementsByClassName('recipe-instructions')).forEach((p) => {
-                if (p.textContent.length > 380) {
-                    p.style.position = 'relative';
-                }
-            })
-        };
-        /**
          * This instance allow to create all the recipes from the retrieved json. After that, the following methods
          * allow to create a container for recipes and the recipes themself.
          * @type {Recipes}
@@ -43,6 +33,7 @@ fetch('./../../api/data/recipe.json')
         recipesToRender.renderRecipeContainer();
         recipesToRender.renderRecipes();
         overFlowDescription();
+
         /**
          * Global variable that will hold the state of display recipes.
          * @type {Array}
@@ -55,47 +46,6 @@ fetch('./../../api/data/recipe.json')
         const selectedIngredientsArray = [];
         const selectedUtensilsArray = [];
         const selectedApplianceArray = [];
-        /**
-         * This function take two array in input and check if the elements of the first array are include in the
-         * second array and return if it's true or false. If the first array is empty return true. Why that ? Because
-         * we want to display recipes that contains filter in the first and second and third array. So, if the first
-         * array is empty it has to return true for the triple logical "and" will return true when we want to check if
-         * all the content of the selected arrays are including in the content of recipes properties
-         * @param arrayIncluded => Array that will receive selected tags
-         * @param arrayIncluding => Array that will receive the recipes properties corresponding to selected tags
-         * @returns {boolean|*} => Boolean that validate or not if the recipe contain selected tags
-         */
-        const isArrayIncludesInAnotherArray = (arrayIncluded, arrayIncluding) => {
-            if (arrayIncluded.length === 0) {
-                return true;
-            } else {
-                return arrayIncluded.every(item => arrayIncluding.map(item => item.toLowerCase()).includes(item.toLowerCase()));
-            }
-        };
-        /**
-         * This function give the focus to the first filter search open after the main search lost focus
-         */
-        const giveFocusOnOver = () => {
-            const openDropdown = Array.from(document.getElementsByClassName('dropdown-button__unroll'))
-            if (openDropdown.length !== 0) {
-                openDropdown[0].focus();
-            }
-        };
-        /**
-         * This function display a message if no recipes are found
-         */
-        const isNoResultsForSearch = () => {
-            const recipesDisplay = Array.from(document.getElementsByClassName('recipe')).filter(rec => rec.getAttribute('style') === 'display: flex;');
-            if (recipesDisplay.length === 0) {
-                if (!document.getElementById('recipe-not-found')) {
-                    document.getElementById('recipes').appendChild(factory.createDOMElement('p', { id: 'recipe-not-found', class: 'text-center' }, '« Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson », etc.'));
-                }
-            } else {
-                if (document.getElementById('recipe-not-found') !== null) {
-                    document.getElementById('recipe-not-found').remove();
-                }
-            }
-        };
 
         /**
          * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
