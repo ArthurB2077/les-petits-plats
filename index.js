@@ -4,7 +4,7 @@ import Search from "./frontend/components/Search.js";
 import FilterByTags from "./frontend/components/FilterByTags.js";
 import Recipes from "./frontend/components/Recipes.js";
 import { findInput } from "./frontend/scripts/algorithms/functionalAlgoRecursive.js";
-import { overFlowDescription, isArrayIncludesInAnotherArray, giveFocusOnOver, isNoResultsForSearch } from "./frontend/scripts/utils/utils.js";
+import { overFlowDescription, giveFocusOnOver, isNoResultsForSearch } from "./frontend/scripts/utils/utils.js";
 
 const header = new Header();
 header.header;
@@ -29,7 +29,7 @@ fetch('./../../api/data/recipe.json')
          * allow to create a container for recipes and the recipes themself.
          * @type {Recipes}
          */
-        const recipesToRender = new Recipes(recipes);
+        const recipesToRender = new Recipes(recipes, filters);
         recipesToRender.renderRecipeContainer();
         recipesToRender.renderRecipes();
         overFlowDescription();
@@ -48,232 +48,6 @@ fetch('./../../api/data/recipe.json')
         const selectedApplianceArray = [];
 
         /**
-         * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
-         * filter list
-         * @param filters => The dropdown list in which his children need to be remove
-         */
-        const removeFilterChildren = (...filters) => {
-            filters.forEach(filter => Array.from(filter.childNodes).forEach(child => child.remove()));
-        };
-        /**
-         * This function take in input all the informations to create the children of a dropdown list and create all his
-         * children
-         * @param noDuplicateFilters => Arrays of tags with no duplicates to insert in dropdown list
-         * @param filter => The dropdown list which will receive the tags to display
-         * @param tagsArray => Array of the actual selected tags to prevent to insert in the dropdown list selected tags
-         * @param filterType => Family of the tags (ingredients, devices, utensils)
-         * @param selectedTagsArrayName => Selected tags array corresponding to the family tag
-         */
-        const createFilterChildren = (noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) => {
-            noDuplicateFilters.forEach((tag) => {
-                if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
-                    filter.appendChild(factory.createDOMElement('a', { class: `dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
-                }
-            });
-        }
-        /**
-         * This function handle the refresh of the tag items in the dropdown list depending of the recipes display
-         * @param newRecipes => Array containing the recipes display
-         */
-        const updateFiltersChildren = (newRecipes) => {
-            const ingredientFilter = document.getElementById('ingredients-list');
-            const deviceFilter = document.getElementById('devices-list');
-            const utensilFilter = document.getElementById('utensils-list');
-            const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector('span').textContent);
-            const preventDoppelgangerIng = [];
-            const preventDoppelgangerUst = [];
-            const preventDoppelgangerDev = [];
-
-            if (newRecipes.length !== 0) {
-                removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
-                newRecipes.forEach(recipe => {
-                    recipe.ingredients.forEach(ing => {
-                        if (!(preventDoppelgangerIng.includes(ing.ingredient.toLowerCase()))){preventDoppelgangerIng.push(ing.ingredient.toLowerCase());}
-                    });
-                    if (!preventDoppelgangerDev.includes(recipe.appliance.toLowerCase())){preventDoppelgangerDev.push(recipe.appliance.toLowerCase());}
-                    recipe.ustensils.forEach(ust => {
-                        if (!preventDoppelgangerUst.includes(ust.toLowerCase())){preventDoppelgangerUst.push(ust.toLowerCase());}
-                    });
-                });
-                createFilterChildren(preventDoppelgangerIng, ingredientFilter, tags, 'ingredients', 'selectedIngredientsArray');
-                createFilterChildren(preventDoppelgangerDev, deviceFilter, tags, 'devices', 'selectedApplianceArray');
-                createFilterChildren(preventDoppelgangerUst, utensilFilter, tags, 'utensils', 'selectedUtensilsArray');
-            } else {
-                removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
-            }
-        };
-        /**
-         * This function handle the refresh of the tags items in the dropdown list depending of the tags selected
-         * and the recipes
-         * @param recipesArray => Array of display recipes which allow dropdown list children to be filtered
-         */
-        const updateFiltersChildrenByTags = (recipesArray) => {
-            if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                const filterCriteria = domRecipes.map(item => item.id);
-                updateFiltersChildren(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-            } else {
-                updateFiltersChildren(recipesArray);
-            }
-        };
-        /**
-         * This function handle the refresh of the tags items in the dropdown list depending on what the user is typing
-         * in the filter input (ingredients, devices, utensils)
-         * @param element
-         */
-        const updateFilterChildrenByInputValue = (element) => {
-            const parentElement = element.parentElement.nextElementSibling.firstElementChild;
-            const elementsToFilter = Array.from(parentElement.children);
-            const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
-            const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
-
-            if(element.value.length > 2) {
-                elementsFiltered.forEach(el => {
-                    el.style.display = 'flex';
-                });
-                elementsFiltered.forEach(el => {
-                    if (!(el.textContent.toLowerCase().includes(element.value.toLowerCase()))) {el.style.display = 'none';}
-                });
-            } else {
-                elementsFiltered.forEach(el => {
-                    el.style.display = 'flex';
-                });
-            }
-        };
-
-        /**
-         * This function hide all recipes and, after that, display only those it had receive in input
-         * @param recipesToDisplay => Array of recipes to be display
-         */
-        const displayRecipes = (recipesToDisplay) => {
-            Array.from(document.getElementsByClassName('recipe')).forEach(el => el.style.display = 'none');
-            recipesToDisplay.forEach(recipe => document.getElementById(`${recipe.id}`).style.display = 'flex');
-        };
-        /**
-         * This function filters recipes by selected tags. If the recipes have properties that matching the selected
-         * tags, those recipes are display
-         * @param recipeToFilter => Array holding the recipes to be filtered
-         */
-        const displayRecipesBySelectedTags = (recipeToFilter) => {
-            const ingredients = [];
-            const appliance = [];
-            recipeToFilter.ingredients.forEach(ing => {
-                ingredients.push(ing.ingredient)
-            });
-            appliance.push(recipeToFilter.appliance);
-            if (isArrayIncludesInAnotherArray(selectedIngredientsArray, ingredients) &&
-                isArrayIncludesInAnotherArray(selectedUtensilsArray, recipeToFilter.ustensils) &&
-                isArrayIncludesInAnotherArray(selectedApplianceArray, appliance))
-            {
-                document.getElementById(`${recipeToFilter.id}`).style.display = 'flex';
-            } else {
-                document.getElementById(`${recipeToFilter.id}`).style.display = 'none';
-            }
-        };
-
-        /**
-         * This function listen all the dropdown list items. If a item is clicked, it's building the tag and add it's
-         * value to the global variable of corresponding selected tags array. It also withdraw the item from the list,
-         * filter the recipes and refresh the dropdown list depending on the new selected tag.
-         * @param tagType => Ingredients, devices or utensils
-         */
-        const displayTag = (tagType) => {
-            const tagItemsDisplayed = Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagType}`)).filter(item => item.getAttribute('style') === 'display: flex;');
-            tagItemsDisplayed.forEach(tagItem => {
-                tagItem.addEventListener('click', (event) => {
-                    filters.tagsBuilder(event.target.textContent, tagType);
-                    switch (event.target.getAttribute('data-group-name')) {
-                        case 'selectedIngredientsArray':
-                            selectedIngredientsArray.push(event.target.textContent);
-                            break;
-                        case 'selectedUtensilsArray':
-                            selectedUtensilsArray.push(event.target.textContent);
-                            break;
-                        case 'selectedApplianceArray':
-                            selectedApplianceArray.push(event.target.textContent);
-                            break;
-                        default:
-                            break;
-                    }
-                    event.target.style.display = 'none';
-                    document.getElementById(`${tagType}-input`).value = '';
-                    if (document.getElementById("searchbar-input").value.length === 0) {
-                        recipes.forEach(recipe => {
-                            displayRecipesBySelectedTags(recipe);
-                        });
-                    } else {
-                        recipeDisplayed.forEach(recipe => {
-                            displayRecipesBySelectedTags(recipe);
-                        });
-                    }
-                    switch (event.target.getAttribute('data-group-name')) {
-                        case 'selectedIngredientsArray': {
-                            if (selectedIngredientsArray.length !== 0) {
-                                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                                const filterCriteria = domRecipes.map(item => item.id);
-                                updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                            } else {
-                                updateFiltersChildren(recipes);
-                            }
-                            break;
-                        }
-                        case 'selectedUtensilsArray': {
-                            if (selectedUtensilsArray.length !== 0) {
-                                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                                const filterCriteria = domRecipes.map(item => item.id);
-                                updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                            } else {
-                                updateFiltersChildren(recipes);
-                            }
-                            break;
-                        }
-                        case 'selectedApplianceArray': {
-                            if (selectedApplianceArray.length !== 0) {
-                                const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                                const filterCriteria = domRecipes.map(item => item.id);
-                                updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                            } else {
-                                updateFiltersChildren(recipes);
-                            }
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                });
-            });
-        };
-        /**
-         * This function remove tag by withdraw it from the corresponding selected tags array, refresh filtered recipes
-         * and refresh content of the dropdown filter list
-         * @param selectedTagArray => Array holding the actual selected tags
-         * @param element => The tags DOM element which will receive the close event
-         * @param tagsNotDisplayed => Array holding the actual tags hide in the dropdown list because they're selected
-         */
-        const removeTag = (selectedTagArray, element, tagsNotDisplayed) => {
-            selectedTagArray.forEach((tag, index) => {
-                if (tag === element.parentElement.firstElementChild.textContent) {
-                    selectedTagArray.splice(index, 1);
-                    tagsNotDisplayed.forEach(tagItem => {
-                        if (tagItem.textContent === tag) {
-                            tagItem.style.display = 'flex';
-                        }
-                    })
-                }
-            });
-            if (selectedApplianceArray.length === 0 && selectedUtensilsArray.length === 0 && selectedIngredientsArray.length === 0) {
-                recipeDisplayed = findInput(`${document.getElementById('searchbar-input').value}`, recipes);
-                displayRecipes(recipeDisplayed);
-            } else {
-                recipeDisplayed = findInput(`${document.getElementById('searchbar-input').value}`, recipes);
-                recipeDisplayed.forEach(recipe => {
-                    displayRecipesBySelectedTags(recipe);
-                })
-            }
-            updateFiltersChildrenByTags(recipeDisplayed);
-        };
-
-        /**
          * On load give the focus to the main search bar
          */
         document.getElementById('searchbar-input').focus();
@@ -290,18 +64,18 @@ fetch('./../../api/data/recipe.json')
         document.getElementById('searchbar-input').addEventListener('input', (event) => {
             if (event.target.value.length > 2) {
                 recipeDisplayed = findInput(`${event.target.value}`, recipes);
-                displayRecipes(recipeDisplayed);
+                recipesToRender.displayRecipes(recipeDisplayed);
                 if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-                    recipeDisplayed.forEach(recipe => displayRecipesBySelectedTags(recipe));
+                    recipeDisplayed.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray));
                 }
-                updateFiltersChildrenByTags(recipeDisplayed);
+                filters.updateFiltersChildrenByTags(recipeDisplayed, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
                 isNoResultsForSearch();
             } else {
-                displayRecipes(recipes);
+                recipesToRender.displayRecipes(recipes);
                 if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
-                    recipes.forEach(recipe => displayRecipesBySelectedTags(recipe));
+                    recipes.forEach(recipe => recipesToRender.displayRecipesBySelectedTags(recipe, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray));
                 }
-                updateFiltersChildrenByTags(recipes);
+                filters.updateFiltersChildrenByTags(recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
                 isNoResultsForSearch();
             }
         });
@@ -312,17 +86,17 @@ fetch('./../../api/data/recipe.json')
          */
         Array.from(document.getElementsByClassName('dropdown-button__input')).forEach(filter => {
             filter.addEventListener('input', (event) => {
-                updateFilterChildrenByInputValue(event.target);
+                filters.updateFilterChildrenByInputValue(event.target);
             });
             filter.addEventListener('change', (event) => {
-                displayTag(event.target.getAttribute('data-name'));
+                recipesToRender.displayTag(event.target.getAttribute('data-name'), recipes, recipeDisplayed, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
             });
             filter.addEventListener('focus', (event) => {
                 if (document.getElementById('searchbar-input').value.length < 3) {
-                    updateFiltersChildrenByTags(recipes);
+                    filters.updateFiltersChildrenByTags(recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
                 }
-                updateFilterChildrenByInputValue(event.target);
-                displayTag(event.target.getAttribute('data-name'));
+                filters.updateFilterChildrenByInputValue(event.target);
+                recipesToRender.displayTag(event.target.getAttribute('data-name'), recipes, recipeDisplayed, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
             });
         });
         /**
@@ -338,15 +112,15 @@ fetch('./../../api/data/recipe.json')
                     tagToClose.remove();
                     switch (tagGroup) {
                         case 'ingredients': {
-                            removeTag(selectedIngredientsArray, event.target, tagItemsNotDisplayed);
+                            recipesToRender.removeTag(selectedIngredientsArray, event.target, tagItemsNotDisplayed, recipeDisplayed, recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
                             break;
                         }
                         case 'devices': {
-                            removeTag(selectedApplianceArray, event.target, tagItemsNotDisplayed);
+                            recipesToRender.removeTag(selectedApplianceArray, event.target, tagItemsNotDisplayed, recipeDisplayed, recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
                             break;
                         }
                         case 'utensils': {
-                            removeTag(selectedUtensilsArray, event.target, tagItemsNotDisplayed);
+                            recipesToRender.removeTag(selectedUtensilsArray, event.target, tagItemsNotDisplayed, recipeDisplayed, recipes, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray);
                             break;
                         }
                         default:

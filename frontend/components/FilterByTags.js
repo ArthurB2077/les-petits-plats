@@ -105,6 +105,107 @@ class FilterByTags {
         })
 
     }
+
+    /**
+     * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
+     * filter list
+     * @param filters => The dropdown list in which his children need to be remove
+     */
+    removeFilterChildren(...filters) {
+        filters.forEach(filter => Array.from(filter.childNodes).forEach(child => child.remove()));
+    }
+
+    /**
+     * This function take in input all the informations to create the children of a dropdown list and create all his
+     * children
+     * @param noDuplicateFilters => Arrays of tags with no duplicates to insert in dropdown list
+     * @param filter => The dropdown list which will receive the tags to display
+     * @param tagsArray => Array of the actual selected tags to prevent to insert in the dropdown list selected tags
+     * @param filterType => Family of the tags (ingredients, devices, utensils)
+     * @param selectedTagsArrayName => Selected tags array corresponding to the family tag
+     */
+    createFilterChildren(noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) {
+        noDuplicateFilters.forEach((tag) => {
+            if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
+                filter.appendChild(factory.createDOMElement('a', { class: `dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
+            }
+        });
+    }
+
+    /**
+     * This function handle the refresh of the tag items in the dropdown list depending of the recipes display
+     * @param newRecipes => Array containing the recipes display
+     */
+    updateFiltersChildren(newRecipes) {
+        const ingredientFilter = document.getElementById('ingredients-list');
+        const deviceFilter = document.getElementById('devices-list');
+        const utensilFilter = document.getElementById('utensils-list');
+        const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector('span').textContent);
+        const preventDoppelgangerIng = [];
+        const preventDoppelgangerUst = [];
+        const preventDoppelgangerDev = [];
+
+        if (newRecipes.length !== 0) {
+            this.removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
+            newRecipes.forEach(recipe => {
+                recipe.ingredients.forEach(ing => {
+                    if (!(preventDoppelgangerIng.includes(ing.ingredient.toLowerCase()))){preventDoppelgangerIng.push(ing.ingredient.toLowerCase());}
+                });
+                if (!preventDoppelgangerDev.includes(recipe.appliance.toLowerCase())){preventDoppelgangerDev.push(recipe.appliance.toLowerCase());}
+                recipe.ustensils.forEach(ust => {
+                    if (!preventDoppelgangerUst.includes(ust.toLowerCase())){preventDoppelgangerUst.push(ust.toLowerCase());}
+                });
+            });
+            this.createFilterChildren(preventDoppelgangerIng, ingredientFilter, tags, 'ingredients', 'selectedIngredientsArray');
+            this.createFilterChildren(preventDoppelgangerDev, deviceFilter, tags, 'devices', 'selectedApplianceArray');
+            this.createFilterChildren(preventDoppelgangerUst, utensilFilter, tags, 'utensils', 'selectedUtensilsArray');
+        } else {
+            this.removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
+        }
+    };
+
+    /**
+     * This function handle the refresh of the tags items in the dropdown list depending of the tags selected
+     * and the recipes
+     * @param recipesArray => Array of display recipes which allow dropdown list children to be filtered
+     * @param selectedIngredientsArray => List of the selected ingredients
+     * @param selectedUtensilsArray => List of the selected utensils
+     * @param selectedApplianceArray => List of the selected devices
+     */
+    updateFiltersChildrenByTags(recipesArray, selectedIngredientsArray, selectedUtensilsArray, selectedApplianceArray) {
+        if (selectedIngredientsArray.length !== 0 || selectedUtensilsArray.length !== 0 || selectedApplianceArray.length !== 0) {
+            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+            const filterCriteria = domRecipes.map(item => item.id);
+            this.updateFiltersChildren(recipesArray.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+        } else {
+            this.updateFiltersChildren(recipesArray);
+        }
+    }
+
+    /**
+     * This function handle the refresh of the tags items in the dropdown list depending on what the user is typing
+     * in the filter input (ingredients, devices, utensils)
+     * @param element
+     */
+    updateFilterChildrenByInputValue(element) {
+        const parentElement = element.parentElement.nextElementSibling.firstElementChild;
+        const elementsToFilter = Array.from(parentElement.children);
+        const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
+        const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
+
+        if(element.value.length > 2) {
+            elementsFiltered.forEach(el => {
+                el.style.display = 'flex';
+            });
+            elementsFiltered.forEach(el => {
+                if (!(el.textContent.toLowerCase().includes(element.value.toLowerCase()))) {el.style.display = 'none';}
+            });
+        } else {
+            elementsFiltered.forEach(el => {
+                el.style.display = 'flex';
+            });
+        }
+    };
 }
 
 export default FilterByTags;

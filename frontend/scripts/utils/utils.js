@@ -1,3 +1,7 @@
+import DOMElementFactory from "../factory/domElementFactory.js";
+
+const factory = new DOMElementFactory();
+
 /**
  * This function check the size of each description paragraph and if it's exceed a maximum length add a style
  * to notify that is hidden
