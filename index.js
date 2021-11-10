@@ -81,15 +81,17 @@ filters.handleDropdownStyle();
      * element would not fire. In order to accomplish that, a mouseover event listen the parent container and if there
      * is listed items in in, it add a on click event listener which will fire in any case and display the tag
      */
-    document.getElementById('ingrédient-group').addEventListener('mouseover', (event) => {
-        if (event.target.tagName === 'A') {
-            Array.from(document.getElementsByClassName('filter-item')).forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.stopImmediatePropagation();
-                    recipes.displayTag(e.target, e.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
+    Array.from(document.getElementsByClassName("btn-group-container")[0].children).forEach(cont => {
+        cont.addEventListener('mouseover', (event) => {
+            if (event.target.tagName === 'A') {
+                Array.from(document.getElementsByClassName('filter-item')).forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopImmediatePropagation();
+                        recipes.displayTag(e.target, e.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
+                    })
                 })
-            })
-        }
+            }
+        })
     })
 
     /**
