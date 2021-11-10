@@ -1,15 +1,14 @@
 import DOMElementFactory from "../scripts/factory/domElementFactory.js";
 
 const factory = new DOMElementFactory();
-const filtersSection = factory.createDOMElement('section', { id: 'dropdown-filters', class: 'mb-4', 'aria-label': 'Section filtres' }, factory.createDOMElement('div', { id: 'tags', class: 'mb-3', 'aria-label': 'Section tags' }));
-document.getElementById('root').appendChild(filtersSection);
+
 const filterProperties = [
     { id: 'ingredients', title: 'Ingrédient', 'bg-color': 'bg-primary', 'btn-color': 'btn-primary', toggle: 'toggle-ing' },
     { id: 'devices', title: 'Appareil', 'bg-color': 'bg-success', 'btn-color': 'btn-success', toggle: 'toggle-dev' },
     { id: 'utensils', title: 'Ustensile', 'bg-color': 'bg-danger', 'btn-color': 'btn-danger', toggle: 'toggle-lis' }
 ];
 
-class FilterByTags {
+class Filters {
     constructor() {
         this.domInsertTags = (contentToInsert) => {
             document.getElementById('tags').appendChild(contentToInsert);
@@ -19,14 +18,11 @@ class FilterByTags {
         };
     }
 
-    get renderFilters() {
-        this.filtersBuilder();
-    }
-
-    get handleRollingDropdown() {
-        this.changeDropdownStyle();
-    }
-
+    /**
+     * Build a tags depending of his name and his group.
+     * @param tagName => Content of the tag
+     * @param tagGroup => Group of the tag among utensils, ingredients and devices
+     */
     tagsBuilder(tagName, tagGroup) {
         const selectedTags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
 
@@ -57,6 +53,9 @@ class FilterByTags {
         }
     }
 
+    /**
+     * Build filters components
+     */
     filtersBuilder() {
         const dropDownButtonContainer = factory.createDOMElement('div', { class: 'btn-group-container' });
 
@@ -76,7 +75,10 @@ class FilterByTags {
         )
     }
 
-    changeDropdownStyle() {
+    /**
+     * This function handle the folding/unfolding of the dropdown filter component.
+     */
+    handleDropdownStyle() {
         filterProperties.forEach(filter => {
             document.getElementById(`${filter.toggle}`).addEventListener('click', (event) => {
                 event.stopPropagation();
@@ -106,11 +108,89 @@ class FilterByTags {
         })
 
     }
+
+    /**
+     * This function remove the children of a DOM element. It's use for update the filter children in the dropdown
+     * filter list
+     * @param filters => The dropdown list in which his children need to be remove
+     */
+    removeFilterChildren(...filters) {
+        filters.forEach(filter => Array.from(filter.childNodes).forEach(child => child.remove()));
+    }
+
+    /**
+     * This function take in input all the informations to create the children of a dropdown list and create all his
+     * children
+     * @param noDuplicateFilters => Arrays of tags with no duplicates to insert in dropdown list
+     * @param filter => The dropdown list which will receive the tags to display
+     * @param tagsArray => Array of the actual selected tags to prevent to insert in the dropdown list selected tags
+     * @param filterType => Family of the tags (ingredients, devices, utensils)
+     * @param selectedTagsArrayName => Selected tags array corresponding to the family tag
+     */
+    createFilterChildren(noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) {
+        noDuplicateFilters.forEach((tag) => {
+            if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
+                filter.appendChild(factory.createDOMElement('a', { class: `dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
+            }
+        });
+    }
+
+    /**
+     * This function handle the refresh of the tag items in the dropdown list depending of the recipes display
+     * @param newRecipes => Array containing the recipes display
+     */
+    updateFiltersChildren(newRecipes) {
+        const ingredientFilter = document.getElementById('ingredients-list');
+        const deviceFilter = document.getElementById('devices-list');
+        const utensilFilter = document.getElementById('utensils-list');
+        const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector('span').textContent);
+        const preventDoppelgangerIng = [];
+        const preventDoppelgangerUst = [];
+        const preventDoppelgangerDev = [];
+
+        if (newRecipes.length !== 0) {
+            this.removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
+            newRecipes.forEach(recipe => {
+                recipe.ingredients.forEach(ing => {
+                    if (!(preventDoppelgangerIng.includes(ing.ingredient.toLowerCase()))){preventDoppelgangerIng.push(ing.ingredient.toLowerCase());}
+                });
+                if (!preventDoppelgangerDev.includes(recipe.appliance.toLowerCase())){preventDoppelgangerDev.push(recipe.appliance.toLowerCase());}
+                recipe.ustensils.forEach(ust => {
+                    if (!preventDoppelgangerUst.includes(ust.toLowerCase())){preventDoppelgangerUst.push(ust.toLowerCase());}
+                });
+            });
+            this.createFilterChildren(preventDoppelgangerIng, ingredientFilter, tags, 'ingredients', 'selectedIngredientsArray');
+            this.createFilterChildren(preventDoppelgangerDev, deviceFilter, tags, 'devices', 'selectedApplianceArray');
+            this.createFilterChildren(preventDoppelgangerUst, utensilFilter, tags, 'utensils', 'selectedUtensilsArray');
+        } else {
+            this.removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
+        }
+    };
+
+    /**
+     * This function handle the refresh of the tags items in the dropdown list depending on what the user is typing
+     * in the filter input (ingredients, devices, utensils)
+     * @param element
+     */
+    updateFilterChildrenByInputValue(element) {
+        const parentElement = element.parentElement.nextElementSibling.firstElementChild;
+        const elementsToFilter = Array.from(parentElement.children);
+        const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
+        const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
+
+        if(element.value.length > 2) {
+            elementsFiltered.forEach(el => {
+                el.style.display = 'flex';
+            });
+            elementsFiltered.forEach(el => {
+                if (!(el.textContent.toLowerCase().includes(element.value.toLowerCase()))) {el.style.display = 'none';}
+            });
+        } else {
+            elementsFiltered.forEach(el => {
+                el.style.display = 'flex';
+            });
+        }
+    };
 }
 
-export const filters = new FilterByTags();
-
-filters.renderFilters;
-filters.handleRollingDropdown;
-
-export default FilterByTags;
+export default Filters;
