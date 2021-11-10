@@ -43,7 +43,7 @@ body header h1 {
 #recipes {
   display: grid;
   grid-template-columns: auto auto auto;
-  grid-gap: 5em;
+  grid-gap: 7em;
   margin-top: 40px;
   justify-content: space-between;
 }
