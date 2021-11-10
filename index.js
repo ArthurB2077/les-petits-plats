@@ -3,7 +3,7 @@ import Header from "./frontend/components/Header.js";
 import Search from "./frontend/components/Search.js";
 import Filters from "./frontend/components/Filters.js";
 import Recipes from "./frontend/components/Recipes.js";
-import {findInput} from "./frontend/scripts/algorithms/objectOrientedAlgoRecursive.js";
+import {findInput} from "./frontend/scripts/algorithms/functionalAlgoRecursive.js";
 import {giveFocusOnOver, isNoResultsForSearch} from "./frontend/scripts/utils/utils.js";
 
 const factory = new DOMElementFactory();
@@ -58,18 +58,14 @@ filters.handleDropdownStyle();
             recipeDisplayed = findInput(`${event.target.value}`, retrievedRecipes);
             recipes.displayRecipes(recipeDisplayed);
             if (recipes.selectedIngredientsArrayLength !== 0 || recipes.selectedUtensilsArrayLength !== 0 ||recipes.selectedApplianceArrayLength !== 0) {
-                for (let recipe of recipeDisplayed) {
-                    recipes.displayRecipesBySelectedTags(recipe)
-                }
+                recipeDisplayed.forEach(recipe => recipes.displayRecipesBySelectedTags(recipe));
             }
             recipes.updateFiltersChildrenByTags(recipeDisplayed);
             isNoResultsForSearch();
         } else {
             recipes.displayRecipes(retrievedRecipes);
             if (recipes.selectedIngredientsArrayLength !== 0 || recipes.selectedUtensilsArrayLength !== 0 ||recipes.selectedApplianceArrayLength !== 0) {
-                for (let recipe of retrievedRecipes) {
-                    recipes.displayRecipesBySelectedTags(recipe)
-                }
+                retrievedRecipes.forEach(recipe => recipes.displayRecipesBySelectedTags(recipe));
             }
             recipes.updateFiltersChildrenByTags(retrievedRecipes);
             isNoResultsForSearch();
@@ -82,32 +78,17 @@ filters.handleDropdownStyle();
      * element would not fire. In order to accomplish that, a mouseover event listen the parent container and if there
      * is listed items in in, it add a on click event listener which will fire in any case and display the tag
      */
-    document.getElementById('ingrédient-group').addEventListener('mouseover', (event) => {
-        if (event.target.tagName === 'A') {
-            Array.from(document.getElementsByClassName('filter-item')).forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.stopImmediatePropagation();
-                    recipes.displayTag(e.target, e.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
+    Array.from(document.getElementsByClassName("btn-group-container")[0].children).forEach(cont => {
+        cont.addEventListener('mouseover', (event) => {
+            if (event.target.tagName === 'A') {
+                Array.from(document.getElementsByClassName('filter-item')).forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopImmediatePropagation();
+                        recipes.displayTag(e.target, e.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
+                    })
                 })
-            })
-        }
-    })
-
-    /**
-     * This function display a tag when the user click on an element in the dropdown listed tag name. This list items
-     * are add and suppressed depending on the user input. In that case, a simple addeventlistner like for a static
-     * element would not fire. In order to accomplish that, a mouseover event listen the parent container and if there
-     * is listed items in in, it add a on click event listener which will fire in any case and display the tag
-     */
-    document.getElementById('ingrédient-group').addEventListener('mouseover', (event) => {
-        if (event.target.tagName === 'A') {
-            Array.from(document.getElementsByClassName('filter-item')).forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.stopImmediatePropagation();
-                    recipes.displayTag(e.target, e.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
-                })
-            })
-        }
+            }
+        })
     })
 
     /**
@@ -115,7 +96,7 @@ filters.handleDropdownStyle();
      * the content of the dropdown list depending on the input value, display a tag if one dropdown list item is
      * clicked and update them if a tag is selected
      */
-    for (let filter of  Array.from(document.getElementsByClassName('dropdown-button__input'))) {
+    Array.from(document.getElementsByClassName('dropdown-button__input')).forEach(filter => {
         filter.addEventListener('input', (event) => {
             filters.updateFilterChildrenByInputValue(event.target);
         });
@@ -125,24 +106,18 @@ filters.handleDropdownStyle();
             }
             filters.updateFilterChildrenByInputValue(event.target);
         });
-    }
+    });
 
     /**
      * Handle the close of a tag and call the appropriate functions for remove it
      */
     document.getElementById('tags').addEventListener('mouseover', () => {
         const tagsCloseButtons = Array.from(document.getElementsByClassName('close-tag'));
-        for (let closeTag of tagsCloseButtons) {
+        tagsCloseButtons.forEach(closeTag => {
             closeTag.addEventListener('click', (event) => {
                 const tagToClose = event.target.parentElement;
                 const tagGroup = event.target.getAttribute('data-group-name');
-                let tagItemsNotDisplayed = [];
-                for (let i = 0; i < Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`)).length; i++) {
-                    if (Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`))[i].getAttribute('style') === 'display: none;') {
-                        tagItemsNotDisplayed.push(Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`))[i]);
-                    }
-                }
-
+                const tagItemsNotDisplayed = Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`)).filter(item => item.getAttribute('style') === 'display: none;');
                 tagToClose.remove();
                 switch (tagGroup) {
                     case 'ingredients': {
@@ -162,7 +137,7 @@ filters.handleDropdownStyle();
                 }
                 document.getElementById(`${tagGroup}-input`).focus();
             });
-        }
+        });
     });
 
 }).catch((error) => console.log(error))
