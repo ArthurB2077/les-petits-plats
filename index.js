@@ -55,7 +55,9 @@ filters.handleDropdownStyle();
             recipeDisplayed = findInput(`${event.target.value}`, retrievedRecipes);
             recipes.displayRecipes(recipeDisplayed);
             if (recipes.selectedIngredientsArrayLength !== 0 || recipes.selectedUtensilsArrayLength !== 0 ||recipes.selectedApplianceArrayLength !== 0) {
-                recipeDisplayed.forEach(recipe => recipes.displayRecipesBySelectedTags(recipe));
+                for (let recipe of recipeDisplayed) {
+                    recipes.displayRecipesBySelectedTags(recipe)
+                }
             }
             recipes.updateFiltersChildrenByTags(recipeDisplayed);
             isNoResultsForSearch();

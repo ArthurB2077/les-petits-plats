@@ -24,7 +24,10 @@ class Filters {
      * @param tagGroup => Group of the tag among utensils, ingredients and devices
      */
     tagsBuilder(tagName, tagGroup) {
-        const selectedTags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
+        let selectedTags = [];
+        for(let tag of Array.from(document.getElementById('tags').children)) {
+            selectedTags.push(tag.querySelector("span").textContent);
+        }
 
         if (!(selectedTags.includes(tagName))) {
             const deleteIcon = factory.createDOMElement('svg', { class: 'close-tag me-2', width: '20', height: '20', viewBox: '0 0 20 20', fill: 'none', xmlns: 'http://www.w3.org/2000/svg', 'data-group-name': `${tagGroup}` }, factory.createDOMElement('path', { d: 'M12.59 6L10 8.59L7.41 6L6 7.41L8.59 10L6 12.59L7.41 14L10 11.41L12.59 14L14 12.59L11.41 10L14 7.41L12.59 6ZM10 0C4.47 0 0 4.47 0 10C0 15.53 4.47 20 10 20C15.53 20 20 15.53 20 10C20 4.47 15.53 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z', fill: 'white', 'pointer-events': 'none' }));
@@ -59,7 +62,7 @@ class Filters {
     filtersBuilder() {
         const dropDownButtonContainer = factory.createDOMElement('div', { class: 'btn-group-container' });
 
-        filterProperties.forEach(filter => {
+        for (let filter of filterProperties) {
             const dropdownListContainer = factory.createDOMElement('div',  { class: 'dropdown-list-container' });
             const dropdownList = factory.createDOMElement('div',  { id: `${filter.id}-list`, class: `dropdown-list ${filter['bg-color']}` })
             dropdownListContainer.appendChild(dropdownList)
@@ -68,7 +71,7 @@ class Filters {
             const buttonSpinner = factory.createDOMElement('svg', { id: `${filter.toggle}`, class: 'dropdown-spinner', 'data-toggle': 'rolled', width:'20px', height: '20px', padding: '10px', viewBox: '0 0 16 11', fill: 'none', xmlns: 'http://www.w3.org/2000/svg' }, factory.createDOMElement('path', { d: 'M14.12 0.453369L8 6.56004L1.88 0.453369L0 2.33337L8 10.3334L16 2.33337L14.12 0.453369Z', fill: 'white' }));
             const dropdownButton = factory.createDOMElement('button', { type: 'button', class: `dropdown-button btn ${filter['btn-color']} btn-lg pt-3 pb-3`, 'aria-expanded': 'false' }, buttonTitle, buttonSpinner);
             dropDownButtonContainer.appendChild(factory.createDOMElement('div', { id: `${filter.title.toLowerCase()}-group`, class: 'dropdown-btn-group me-3' }, dropdownButton, dropdownListContainer));
-        })
+        }
 
         return (
             this.domInsertFilters(dropDownButtonContainer)
@@ -79,7 +82,7 @@ class Filters {
      * This function handle the folding/unfolding of the dropdown filter component.
      */
     handleDropdownStyle() {
-        filterProperties.forEach(filter => {
+        for (let filter of filterProperties) {
             document.getElementById(`${filter.toggle}`).addEventListener('click', (event) => {
                 event.stopPropagation();
                 const parentGroup = document.getElementById(`${filter.title.toLowerCase()}-group`);
@@ -105,7 +108,7 @@ class Filters {
                     event.target.setAttribute('data-toggle', 'rolled')
                 }
             })
-        })
+        }
 
     }
 
@@ -115,7 +118,11 @@ class Filters {
      * @param filters => The dropdown list in which his children need to be remove
      */
     removeFilterChildren(...filters) {
-        filters.forEach(filter => Array.from(filter.childNodes).forEach(child => child.remove()));
+        for (let filter of filters) {
+            for (let child of Array.from(filter.childNodes)) {
+                child.remove()
+            }
+        }
     }
 
     /**
@@ -128,11 +135,11 @@ class Filters {
      * @param selectedTagsArrayName => Selected tags array corresponding to the family tag
      */
     createFilterChildren(noDuplicateFilters, filter, tagsArray, filterType, selectedTagsArrayName) {
-        noDuplicateFilters.forEach((tag) => {
+        for (let tag of noDuplicateFilters) {
             if (!(tagsArray.includes(tag.replace(tag[0], tag[0].toUpperCase())))) {
                 filter.appendChild(factory.createDOMElement('a', { class: `dropdown-filter-item__${filterType} text-white`, href: '#', 'data-group-name': `${selectedTagsArrayName}` }, `${tag.replace(tag[0], tag[0].toUpperCase())}`));
             }
-        });
+        }
     }
 
     /**
@@ -143,22 +150,25 @@ class Filters {
         const ingredientFilter = document.getElementById('ingredients-list');
         const deviceFilter = document.getElementById('devices-list');
         const utensilFilter = document.getElementById('utensils-list');
-        const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector('span').textContent);
+        let tags = [];
+        for(let tag of Array.from(document.getElementById('tags').children)) {
+            tags.push(tag.querySelector("span").textContent);
+        }
         const preventDoppelgangerIng = [];
         const preventDoppelgangerUst = [];
         const preventDoppelgangerDev = [];
 
         if (newRecipes.length !== 0) {
             this.removeFilterChildren(ingredientFilter, deviceFilter, utensilFilter);
-            newRecipes.forEach(recipe => {
-                recipe.ingredients.forEach(ing => {
+            for (let recipe of newRecipes) {
+                for (let ing of recipe.ingredients) {
                     if (!(preventDoppelgangerIng.includes(ing.ingredient.toLowerCase()))){preventDoppelgangerIng.push(ing.ingredient.toLowerCase());}
-                });
+                }
                 if (!preventDoppelgangerDev.includes(recipe.appliance.toLowerCase())){preventDoppelgangerDev.push(recipe.appliance.toLowerCase());}
-                recipe.ustensils.forEach(ust => {
+                for (let ust of recipe.ustensils) {
                     if (!preventDoppelgangerUst.includes(ust.toLowerCase())){preventDoppelgangerUst.push(ust.toLowerCase());}
-                });
-            });
+                }
+            }
             this.createFilterChildren(preventDoppelgangerIng, ingredientFilter, tags, 'ingredients', 'selectedIngredientsArray');
             this.createFilterChildren(preventDoppelgangerDev, deviceFilter, tags, 'devices', 'selectedApplianceArray');
             this.createFilterChildren(preventDoppelgangerUst, utensilFilter, tags, 'utensils', 'selectedUtensilsArray');
@@ -174,21 +184,30 @@ class Filters {
      */
     updateFilterChildrenByInputValue(element) {
         const parentElement = element.parentElement.nextElementSibling.firstElementChild;
-        const elementsToFilter = Array.from(parentElement.children);
-        const tags = Array.from(document.getElementById('tags').children).map(item => item.querySelector("span").textContent);
-        const elementsFiltered = elementsToFilter.filter(listedTag => !tags.join().includes(listedTag.textContent))
+
+        let tags = [];
+        for(let tag of Array.from(document.getElementById('tags').children)) {
+            tags.push(tag.querySelector("span").textContent);
+        }
+
+        let elementsFiltered = [];
+        for(let listedTag of Array.from(parentElement.children)) {
+            if (!tags.join().includes(listedTag.textContent)) {
+                elementsFiltered.push(listedTag)
+            }
+        }
 
         if(element.value.length > 2) {
-            elementsFiltered.forEach(el => {
+            for (let el of elementsFiltered) {
                 el.style.display = 'flex';
-            });
-            elementsFiltered.forEach(el => {
+            }
+            for (let el of elementsFiltered) {
                 if (!(el.textContent.toLowerCase().includes(element.value.toLowerCase()))) {el.style.display = 'none';}
-            });
+            }
         } else {
-            elementsFiltered.forEach(el => {
+            for (let el of elementsFiltered) {
                 el.style.display = 'flex';
-            });
+            }
         }
     };
 }
