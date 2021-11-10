@@ -64,7 +64,9 @@ filters.handleDropdownStyle();
         } else {
             recipes.displayRecipes(retrievedRecipes);
             if (recipes.selectedIngredientsArrayLength !== 0 || recipes.selectedUtensilsArrayLength !== 0 ||recipes.selectedApplianceArrayLength !== 0) {
-                retrievedRecipes.forEach(recipe => recipes.displayRecipesBySelectedTags(recipe));
+                for (let recipe of retrievedRecipes) {
+                    recipes.displayRecipesBySelectedTags(recipe)
+                }
             }
             recipes.updateFiltersChildrenByTags(retrievedRecipes);
             isNoResultsForSearch();
@@ -75,7 +77,8 @@ filters.handleDropdownStyle();
      * the content of the dropdown list depending on the input value, display a tag if one dropdown list item is
      * clicked and update them if a tag is selected
      */
-    Array.from(document.getElementsByClassName('dropdown-button__input')).forEach(filter => {
+
+    for (let filter of  Array.from(document.getElementsByClassName('dropdown-button__input'))) {
         filter.addEventListener('input', (event) => {
             filters.updateFilterChildrenByInputValue(event.target);
         });
@@ -89,17 +92,23 @@ filters.handleDropdownStyle();
             filters.updateFilterChildrenByInputValue(event.target);
             recipes.displayTag(event.target.getAttribute('data-name'), retrievedRecipes, recipeDisplayed);
         });
-    });
+    }
     /**
      * Handle the close of a tag and call the appropriate functions for remove it
      */
     document.getElementById('tags').addEventListener('mouseover', () => {
         const tagsCloseButtons = Array.from(document.getElementsByClassName('close-tag'));
-        tagsCloseButtons.forEach(closeTag => {
+        for (let closeTag of tagsCloseButtons) {
             closeTag.addEventListener('click', (event) => {
                 const tagToClose = event.target.parentElement;
                 const tagGroup = event.target.getAttribute('data-group-name');
-                const tagItemsNotDisplayed = Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`)).filter(item => item.getAttribute('style') === 'display: none;');
+                let tagItemsNotDisplayed = [];
+                for (let i = 0; i < Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`)).length; i++) {
+                    if (Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`))[i].getAttribute('style') === 'display: none;') {
+                        tagItemsNotDisplayed.push(Array.from(document.getElementsByClassName(`dropdown-filter-item__${tagGroup}`))[i]);
+                    }
+                }
+
                 tagToClose.remove();
                 switch (tagGroup) {
                     case 'ingredients': {
@@ -119,6 +128,6 @@ filters.handleDropdownStyle();
                 }
                 document.getElementById(`${tagGroup}-input`).focus();
             });
-        });
+        }
     });
 }).catch((error) => console.log(error))

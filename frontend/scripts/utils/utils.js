@@ -36,7 +36,12 @@ export const giveFocusOnOver = () => {
  * This function display a message if no recipes are found
  */
 export const isNoResultsForSearch = () => {
-    const recipesDisplay = Array.from(document.getElementsByClassName('recipe')).filter(rec => rec.getAttribute('style') === 'display: flex;');
+    let recipesDisplay = [];
+    for (let i = 0; i < Array.from(document.getElementsByClassName('recipe')).length; i++) {
+        if (Array.from(document.getElementsByClassName('recipe'))[i].getAttribute('style') === 'display: flex;') {
+            recipesDisplay.push(Array.from(document.getElementsByClassName('recipe'))[i])
+        }
+    }
     if (recipesDisplay.length === 0) {
         if (!document.getElementById('recipe-not-found')) {
             document.getElementById('recipes').appendChild(factory.createDOMElement('p', { id: 'recipe-not-found', class: 'text-center' }, '« Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson », etc.'));
