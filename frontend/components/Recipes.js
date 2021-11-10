@@ -248,7 +248,6 @@ class Recipes {
      * @param tagsNotDisplayed => Array holding the actual tags hide in the dropdown list because they're selected
      * @param recipeDisplayed => Array of recipes displayed in the dom
      * @param recipes => Array of the recipes from the fetch retrieved
-
      */
     removeTag(selectedTagArrayName, element, tagsNotDisplayed, recipeDisplayed, recipes) {
         switch (selectedTagArrayName) {
