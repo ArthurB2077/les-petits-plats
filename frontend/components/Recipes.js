@@ -170,6 +170,23 @@ class Recipes {
     }
 
     /**
+     * This function help displayTag to handle the updating of the filters childrens depending on if there is tags
+     * selected and what's recipes are actually display in the dom
+     @param selectedTagArray => Array holding the value of the selected tags
+     * @param filteringRecipes => The actual recipes display in the DOM filtered by the tags or not and will help to
+     * update the filters children
+     */
+    handleUpdatingFiltersChildren(selectedTagArray, filteringRecipes) {
+        if (selectedTagArray.length !== 0) {
+            const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
+            const filterCriteria = domRecipes.map(item => item.id);
+            this.instanceOfFilters.updateFiltersChildren(filteringRecipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
+        } else {
+            this.instanceOfFilters.updateFiltersChildren(filteringRecipes);
+        }
+    }
+
+    /**
      * This function listen all the dropdown list items. If a item is clicked, it's building the tag and add it's
      * value to the global variable of corresponding selected tags array. It also withdraw the item from the list,
      * filter the recipes and refresh the dropdown list depending on the new selected tag.
@@ -179,7 +196,11 @@ class Recipes {
      * @param recipeDisplayed => Array of recipes displayed in the dom
      */
     displayTag(eventTarget, tagType, recipes, recipeDisplayed) {
+        // Build a tag element in the DOM
         this.instanceOfFilters.tagsBuilder(eventTarget.textContent, tagType);
+
+        // Depending on the family tag (ingredients, utensils, devices), push the value of the tags in the corresponding
+        // selected tags array
         switch (eventTarget.getAttribute('data-group-name')) {
             case 'selectedIngredientsArray':
                 this.selectedIngredientsArray.push(eventTarget.textContent);
@@ -193,8 +214,16 @@ class Recipes {
             default:
                 break;
         }
+
+        // Remove the filter child who receive the user click from the filters lis
         eventTarget.style.display = 'none';
+
+        // Reset the filters search bar input to empty after adding the tag
         document.getElementById(`${tagType}-input`).value = '';
+
+        // If the main search bar is empty and no recipes are filtered before adding the tag, filter all the recipes
+        // on by the tags selected. Else, filter the recipes already filtered by the input in the main search bar also
+        // by the selected tags
         if (document.getElementById("searchbar-input").value.length === 0) {
             recipes.forEach(recipe => {
                 this.displayRecipesBySelectedTags(recipe);
@@ -204,39 +233,45 @@ class Recipes {
                 this.displayRecipesBySelectedTags(recipe);
             });
         }
+
+        // Update the filters children depending on the actual selected tag
         switch (eventTarget.getAttribute('data-group-name')) {
             case 'selectedIngredientsArray': {
-                if (this.selectedIngredientsArray.length !== 0) {
-                    const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                    const filterCriteria = domRecipes.map(item => item.id);
-                    this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                } else {
-                    this.instanceOfFilters.updateFiltersChildren(recipes);
-                }
+                this.handleUpdatingFiltersChildren(this.selectedIngredientsArray, recipes);
                 break;
             }
             case 'selectedUtensilsArray': {
-                if (this.selectedUtensilsArray.length !== 0) {
-                    const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                    const filterCriteria = domRecipes.map(item => item.id);
-                    this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                } else {
-                    this.instanceOfFilters.updateFiltersChildren(recipes);
-                }
+                this.handleUpdatingFiltersChildren(this.selectedUtensilsArray, recipes);
                 break;
             }
             case 'selectedApplianceArray': {
-                if (this.selectedApplianceArray.length !== 0) {
-                    const domRecipes = Array.from(document.getElementById('recipes').querySelectorAll('div[style="display: flex;"]'));
-                    const filterCriteria = domRecipes.map(item => item.id);
-                    this.instanceOfFilters.updateFiltersChildren(recipes.filter(recipe => filterCriteria.includes(recipe.id.toString())));
-                } else {
-                    this.instanceOfFilters.updateFiltersChildren(recipes);
-                }
+                this.handleUpdatingFiltersChildren(this.selectedApplianceArray, recipes);
                 break;
             }
             default:
                 break;
+        }
+    }
+
+    /**
+     * This function help removeTag to remove closed tags from the selected array and display them in the filters
+     * children list
+     * @param selectedTagsArray => Array holding the value of the selected tags
+     * @param tagsHiddenInFiltersList => Array of the filters children not displayed
+     * @param closeElement => SVG close icon who receive the event click for closing the tag
+     * @param index => Index used to do operation on element over iterating the array with for of loop
+     */
+    removeTagFromSelectedArray(selectedTagsArray, tagsHiddenInFiltersList, closeElement, index) {
+        for (let tag of this.selectedIngredientsArray) {
+            if (tag === closeElement.parentElement.firstElementChild.textContent) {
+                selectedTagsArray.splice(index, 1);
+                tagsHiddenInFiltersList.forEach(tagItem => {
+                    if (tagItem.textContent === tag) {
+                        tagItem.style.display = 'flex';
+                    }
+                })
+            }
+            index++
         }
     }
 
@@ -253,48 +288,17 @@ class Recipes {
         switch (selectedTagArrayName) {
             case 'ingredients': {
                 let index = 0;
-                for (let tag of this.selectedIngredientsArray) {
-                    if (tag === element.parentElement.firstElementChild.textContent) {
-                        this.selectedIngredientsArray.splice(index, 1);
-                        for (let tagItem of tagsNotDisplayed) {
-                            if (tagItem.textContent === tag) {
-                                tagItem.style.display = 'flex';
-                            }
-                        }
-                    }
-                    index++;
-                }
+                this.removeTagFromSelectedArray(this.selectedIngredientsArray, tagsNotDisplayed, element, index);
                 break;
             }
             case 'devices': {
                 let index = 0;
-                for (let tag of this.selectedApplianceArray) {
-                    if (tag === element.parentElement.firstElementChild.textContent) {
-                        this.selectedApplianceArray.splice(index, 1);
-                        for (let tagItem of tagsNotDisplayed) {
-                            if (tagItem.textContent === tag) {
-                                tagItem.style.display = 'flex';
-                            }
-                        }
-                    }
-                    index++;
-                }
+                this.removeTagFromSelectedArray(this.selectedApplianceArray, tagsNotDisplayed, element, index);
                 break;
             }
             case 'utensils': {
                 let index = 0;
-
-                for (let tag of this.selectedUtensilsArray) {
-                    if (tag === element.parentElement.firstElementChild.textContent) {
-                        this.selectedApplianceArray.splice(index, 1);
-                        for (let tagItem of tagsNotDisplayed) {
-                            if (tagItem.textContent === tag) {
-                                tagItem.style.display = 'flex';
-                            }
-                        }
-                    }
-                    index++;
-                }
+                this.removeTagFromSelectedArray(this.selectedUtensilsArray, tagsNotDisplayed, element, index);
                 break;
             }
             default:
