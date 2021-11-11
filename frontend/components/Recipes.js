@@ -259,10 +259,10 @@ class Recipes {
      * @param selectedTagsArray => Array holding the value of the selected tags
      * @param tagsHiddenInFiltersList => Array of the filters children not displayed
      * @param closeElement => SVG close icon who receive the event click for closing the tag
-     * @param index => Index used to do operation on element over iterating the array with for of loop
      */
-    removeTagFromSelectedArray(selectedTagsArray, tagsHiddenInFiltersList, closeElement, index) {
-        for (let tag of this.selectedIngredientsArray) {
+    removeTagFromSelectedArray(selectedTagsArray, tagsHiddenInFiltersList, closeElement) {
+        let index = 0;
+        for (let tag of selectedTagsArray) {
             if (tag === closeElement.parentElement.firstElementChild.textContent) {
                 selectedTagsArray.splice(index, 1);
                 tagsHiddenInFiltersList.forEach(tagItem => {
@@ -287,18 +287,15 @@ class Recipes {
     removeTag(selectedTagArrayName, element, tagsNotDisplayed, recipeDisplayed, recipes) {
         switch (selectedTagArrayName) {
             case 'ingredients': {
-                let index = 0;
-                this.removeTagFromSelectedArray(this.selectedIngredientsArray, tagsNotDisplayed, element, index);
+                this.removeTagFromSelectedArray(this.selectedIngredientsArray, tagsNotDisplayed, element);
                 break;
             }
             case 'devices': {
-                let index = 0;
-                this.removeTagFromSelectedArray(this.selectedApplianceArray, tagsNotDisplayed, element, index);
+                this.removeTagFromSelectedArray(this.selectedApplianceArray, tagsNotDisplayed, element);
                 break;
             }
             case 'utensils': {
-                let index = 0;
-                this.removeTagFromSelectedArray(this.selectedUtensilsArray, tagsNotDisplayed, element, index);
+                this.removeTagFromSelectedArray(this.selectedUtensilsArray, tagsNotDisplayed, element);
                 break;
             }
             default:
