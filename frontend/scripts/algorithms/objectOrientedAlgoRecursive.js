@@ -18,6 +18,7 @@ export const searchRecursively = (searchIn, searchFor, isIncludingSearch) => {
         if (typeof searchIn[i] === 'string') {
             if (searchIn[i].toLowerCase().includes(searchFor.toLowerCase())) {
                 isIncludingSearch.push(searchIn[i]);
+                break;
             }
         } else {
             searchRecursively(searchIn[i], searchFor, isIncludingSearch);
