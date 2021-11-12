@@ -4,7 +4,7 @@ import Search from "./frontend/components/Search.js";
 import Filters from "./frontend/components/Filters.js";
 import Recipes from "./frontend/components/Recipes.js";
 import {findInput} from "./frontend/scripts/algorithms/functionalAlgoRecursive.js";
-import {giveFocusOnOver, isNoResultsForSearch} from "./frontend/scripts/utils/utils.js";
+import {isNoResultsForSearch} from "./frontend/scripts/utils/utils.js";
 
 const factory = new DOMElementFactory();
 
@@ -42,12 +42,6 @@ filters.handleDropdownStyle();
      */
     document.getElementById('searchbar-input').focus();
 
-    /**
-     * When the main searchbar lost focus, this event give it to the first open searchbar filter open
-     */
-    document.getElementById('searchbar-input').addEventListener('blur', () => {
-        giveFocusOnOver();
-    });
 
     /**
      * Event listener that filter the displayed recipes depending on the user input value. It has a condition to
