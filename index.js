@@ -43,13 +43,6 @@ filters.handleDropdownStyle();
     document.getElementById('searchbar-input').focus();
 
     /**
-     * When the main searchbar lost focus, this event give it to the first open searchbar filter open
-     */
-    document.getElementById('searchbar-input').addEventListener('blur', () => {
-        giveFocusOnOver();
-    });
-
-    /**
      * Event listener that filter the displayed recipes depending on the user input value. It has a condition to
      * handle the case where a new search is initialise and a tag or more are already selected
      */
