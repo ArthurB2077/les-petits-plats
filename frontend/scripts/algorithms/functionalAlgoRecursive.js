@@ -13,7 +13,7 @@ export const searchRecursively = (searchIn, searchFor, isIncludingSearch) => {
     } else if (typeof searchIn === 'number') {
         searchIn = [searchIn.toString()];
     }
-    searchIn.some(el => {
+    searchIn.forEach(el => {
         if (typeof el === 'string') {
             if (el.toLowerCase().includes(searchFor.toLowerCase())) {
                 isIncludingSearch.push(el);
