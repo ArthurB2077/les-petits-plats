@@ -22,17 +22,6 @@ export const isArrayIncludesInAnotherArray = (arrayIncluded, arrayIncluding) => 
 
 
 /**
- * This function give the focus to the first filter search open after the main search lost focus
- */
-export const giveFocusOnOver = () => {
-    const openDropdown = Array.from(document.getElementsByClassName('dropdown-button__unroll'))
-    if (openDropdown.length !== 0) {
-        openDropdown[0].focus();
-    }
-};
-
-
-/**
  * This function display a message if no recipes are found
  */
 export const isNoResultsForSearch = () => {
