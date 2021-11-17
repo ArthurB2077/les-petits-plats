@@ -1,4 +1,4 @@
-@media all and (min-width: 200px) and (max-width: 600px) {
+@media all and (min-width: 200px) and (max-width: 1035px) {
   #root {
     margin: 10%;
   }
@@ -7,11 +7,13 @@
   display: inline-grid;
   grid-template-columns: auto auto auto;
   margin-top: 10px;
+  z-index: 2;
+  position: absolute;
 }
 @media all and (min-width: 200px) and (max-width: 1035px) {
   #root .btn-group-container {
     grid-template-columns: auto;
-    width: 100%;
+    width: 80%;
     grid-row-gap: 30px;
   }
 }
