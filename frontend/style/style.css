@@ -44,7 +44,7 @@ body header h1 {
   display: grid;
   grid-template-columns: auto auto auto;
   grid-gap: 5em;
-  margin-top: 40px;
+  margin-top: 140px;
   justify-content: space-between;
 }
 @media all and (min-width: 1311px) and (max-width: 1690px) {
@@ -53,16 +53,17 @@ body header h1 {
     grid-gap: 3em;
   }
 }
-@media all and (min-width: 1030px) and (max-width: 1310px) {
+@media all and (min-width: 1035px) and (max-width: 1310px) {
   #recipes {
     grid-template-columns: auto auto;
     grid-gap: 5em;
   }
 }
-@media all and (min-width: 200px) and (max-width: 1029px) {
+@media all and (min-width: 200px) and (max-width: 1035px) {
   #recipes {
     grid-template-columns: auto;
     justify-content: center;
+    margin-top: 350px;
   }
 }
 @media all and (min-width: 200px) and (max-width: 679px) {
