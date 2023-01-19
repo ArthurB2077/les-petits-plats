@@ -24,10 +24,6 @@ You just need to clone the project and run an npm install or yarn install. The d
 directory api / data.
 You can then open the index.html on your preferred browser.
 
-Made with:
-Webstorm - Text editor
-Scss.css - CSS Framework (front-end)
-EsLint - Linter JS
+Made with: Webstorm - Code editor, SCSS - CSS Preprocessor, Javascript, EsLint - Linter JS
 
-Authors
-Arthur Béquié
+Author: Arthur B
